@@ -17,6 +17,9 @@ nexusclient.sys.gmcp = function(m, r) {
 		for (var i of r) { nexusclient.sys.defslist.push(i.desc); }
 	} else if (m === "IRE.Target.Info") {
 		nexusclient.sys.tarHealth = parseInt(r.hpperc.replace("%",""))
-	}
+	} else if (m === "Char.Defences.Add") {
+		if (!nexusclient.sys.defslist) {nexusclient.sys.defslist = [];}
+		nexusclient.sys.defslist.push(r.desc);
+	} 
 	return false;	
 }

@@ -1,9 +1,5 @@
 nexusclient.sys = {};
 
-nexusclient.reflexes().run_function("Bashtargets", "", "smnx3");
-nexusclient.reflexes().run_function("Interrupts", "", "smnx3");
-nexusclient.reflexes().run_function("Trigger", "", "smnx3");
-
 nexusclient.sys.gmcp = function(m, r) {
 	if (m === "Char.Vitals") {
 		nexusclient.sys.systems.forEach(function(s){

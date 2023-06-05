@@ -8,6 +8,12 @@ nexusclient.sys.info = function (m) {
     nexusclient.display_notice("[SYS-INFO]: " + m, "white");
 };
 
+nexusclient.sys.listcompare = function(a1, a2) {
+	const array1Sorted = a1.slice().sort();
+	const array2Sorted = a2.slice().sort();
+	return array1Sorted.toString() == array2Sorted.toString();
+}
+
 nexusclient.sys.nanodefs = [
 	{ name:'Rush', cmd:'nano rush' },
 	{ name:'Channeling the Traveller', cmd:'channel traveller' },

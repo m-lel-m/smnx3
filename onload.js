@@ -1,8 +1,8 @@
 nexusclient.sys = {};
 
 nexusclient.reflexes().run_function("Bashtargets", "", "smnx3");
-nexusclient.reflexes().run_function("Trigger", "", "smnx3");
 nexusclient.reflexes().run_function("Interrupts", "", "smnx3");
+nexusclient.reflexes().run_function("Trigger", "", "smnx3");
 
 nexusclient.sys.send = function (cmd) {
     nexusclient.send_commands(cmd, 1);

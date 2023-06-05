@@ -1,5 +1,9 @@
 nexusclient.sys = {};
 
+nexusclient.reflexes().run_function("Bashtargets", "", "smnx3");
+nexusclient.reflexes().run_function("Trigger", "", "smnx3");
+nexusclient.reflexes().run_function("Interrupts", "", "smnx3");
+
 nexusclient.sys.send = function (cmd) {
     nexusclient.send_commands(cmd, 1);
 };
@@ -128,10 +132,6 @@ nexusclient.sys.needInterrupt = function () {
     if (!nexusclient.sys.interrupt) {
         return false; }
     switch (nexusclient.sys.class) {
-    case "Engineer":
-    case "Scoundrel":
-    case "BEAST":
-    case "Fury":
     case "Nanoseer":
         return "nano eyestrike " + nexusclient.sys.chanTar;
     default:
@@ -214,9 +214,5 @@ nexusclient.sys.onBal = function () {
         nexusclient.sys.attack();
     }
 };
-
-nexusclient.reflexes().run_function("Bashtargets", "", "smnx3");
-nexusclient.reflexes().run_function("Trigger", "", "smnx3");
-nexusclient.reflexes().run_function("Interrupts", "", "smnx3");
 
 nexusclient.sys.info("smnx3 loaded!");

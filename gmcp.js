@@ -20,6 +20,8 @@ nexusclient.sys.gmcp = function(m, r) {
 	} else if (m === "Char.Defences.Add") {
 		if (!nexusclient.sys.defslist) {nexusclient.sys.defslist = [];}
 		nexusclient.sys.defslist.push(r.desc);
+	} else if (m === "Char.Defences.Remove") {
+		nexusclient.sys.info(r);
 	} 
 	return false;	
 }

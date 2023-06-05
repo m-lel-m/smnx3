@@ -1,5 +1,9 @@
 nexusclient.sys.gmcp = function(m, r) {
 	if (m === "Char.Vitals") {
+		nexusclient.sys.systems.forEach(function(s){
+			client.sys.subsys.health[s] = parseFloat(r[s]);
+			client.sys.subsys.efficacy[s] = parseFloat(r[s+"_efficacy"]);
+		});
 		nexusclient.sys.bal = r.bal == "1" ? true : false;
 		nexusclient.sys.wwBal = r.ww == "1" ? true : false;
 		nexusclient.sys.hpperc = parseInt(r.hp)/parseInt(r.maxhp);

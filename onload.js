@@ -323,4 +323,7 @@ client.sys.hider = function () {
     }
 };
 
+nexusclient.reflexes().run_function("Bashtargets", "", "smnx3");
+nexusclient.reflexes().run_function("Trigger", "", "smnx3");
+
 nexusclient.sys.info("smnx3 loaded!");

@@ -2,10 +2,6 @@ nexusclient.sys.gmcp = function(m, r) {
 	var m = args.gmcp_method;
 	var r = args.gmcp_args;
 	if (m === "Char.Vitals") {
-		nexusclient.sys.systems.forEach(function(sys){
-			nexusclient.sys.sys.health[sys] = parseFloat(r[sys]);
-			nexusclient.sys.sys.efficacy[sys] = parseFloat(r[sys+"_efficacy"]);
-		});
 		nexusclient.sys.bal = r.bal == "1" ? true : false;
 		nexusclient.sys.wwBal = r.ww == "1" ? true : false;
 		nexusclient.sys.hpperc = parseInt(r.hp)/parseInt(r.maxhp);
@@ -25,7 +21,7 @@ nexusclient.sys.gmcp = function(m, r) {
 		console.log(r);
 		console.log(r.desc);
 	} else if (m === "Char.Defences.Remove") {
-		nexusclient.sys.info(r);
+		// nexusclient.sys.info(r);
 	} 
 	return false;	
 }

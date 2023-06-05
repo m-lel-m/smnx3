@@ -1,7 +1,7 @@
 nexusclient.sys = {};
 
 nexusclient.sys.send = function (cmd) {
-    send_command(cmd, 1);
+    nexusclient.send_commands(cmd, 1);
 };
 
 nexusclient.sys.info = function (m) {

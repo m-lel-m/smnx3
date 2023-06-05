@@ -25,7 +25,7 @@ nexusclient.sys.nanodefs = [
 	{ name:'Improved affinity towards the Progenitor', cmd:'oblivion affinity progenitor' }
 ]
 
-nexusclient.sys.class = nexusclient.get_variable("my_class");
+nexusclient.sys.class = nexusclient.variables().get("my_class");
 if (nexusclient.sys.class === "B.E.A.S.T.") { nexusclient.sys.class = "BEAST"; }
 nexusclient.sys.systems = [
     "muscular",

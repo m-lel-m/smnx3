@@ -1,6 +1,4 @@
 nexusclient.sys.gmcp = function(m, r) {
-	var m = args.gmcp_method;
-	var r = args.gmcp_args;
 	if (m === "Char.Vitals") {
 		nexusclient.sys.bal = r.bal == "1" ? true : false;
 		nexusclient.sys.wwBal = r.ww == "1" ? true : false;
@@ -16,10 +14,10 @@ nexusclient.sys.gmcp = function(m, r) {
 	} else if (m === "IRE.Target.Info") {
 		nexusclient.sys.tarHealth = parseInt(r.hpperc.replace("%",""))
 	} else if (m === "Char.Defences.Add") {
-		if (!nexusclient.sys.defslist||nexusclient.sys.defslist==undefined) {nexusclient.sys.defslist = [];}
+		if (!nexusclient.sys.defslist||nexusclient.sys.defslist==undefined) {
+			nexusclient.sys.defslist = [];
+		}
 		nexusclient.sys.defslist.push(r.desc);
-		console.log(r);
-		console.log(r.desc);
 	} else if (m === "Char.Defences.Remove") {
 		// nexusclient.sys.info(r);
 	} 

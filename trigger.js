@@ -21,3 +21,5 @@ nexusclient.sys.echoTrigger = function(r) {
 	display_notice(r);
 	nexusclient.sys.trigger(r);
 }
+
+nexusclient.sys.trigger(args[1]);

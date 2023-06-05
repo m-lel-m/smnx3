@@ -8,7 +8,7 @@ nexusclient.sys.info = function (m) {
     nexusclient.display_notice("[SYS-INFO]: " + m, "white");
 };
 
-nexusclient.sys.nanodefs = {
+nexusclient.sys.nanodefs = [
 	{ name:'Rush', cmd:'nano rush' },
 	{ name:'Channeling the Traveller', cmd:'channel traveller' },
 	{ name:'Miniaturization', cmd:'nano miniaturization' },
@@ -17,6 +17,6 @@ nexusclient.sys.nanodefs = {
 	{ name:'Alertness', cmd:'alertness' },
 	{ name:'Improved affinity towards the Conqueror', cmd:'oblivion affinity conqueror' },
 	{ name:'Improved affinity towards the Progenitor', cmd:'oblivion affinity progenitor' }
-}
+]
 
 nexusclient.sys.info("smnx3 loaded!");

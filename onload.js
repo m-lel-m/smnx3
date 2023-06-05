@@ -14,19 +14,57 @@ nexusclient.sys.gmcp = function(m, r) {
 		eval("nexusclient.sys.cooldowns = {"+r.cooldowns+"}");
 		nexusclient.sys.sanity = r.sa;
 		nexusclient.sys.nanites = r.nn;
-	} else if (m === "Char.Defences.List") {
+	}
+	if (m === "Char.Defences.List") {
 		nexusclient.sys.defslist = [];
 		for (var i of r) { nexusclient.sys.defslist.push(i.desc); }
-	} else if (m === "IRE.Target.Info") {
+	}
+	if (m === "IRE.Target.Info") {
 		nexusclient.sys.tarHealth = parseInt(r.hpperc.replace("%",""))
-	} else if (m === "Char.Defences.Add") {
+	}
+	if (m === "Char.Defences.Add") {
 		if (!nexusclient.sys.defslist||nexusclient.sys.defslist==undefined) {
 			nexusclient.sys.defslist = [];
 		}
 		nexusclient.sys.defslist.push(r.desc);
-	} else if (m === "Char.Defences.Remove") {
+	}
+	if (m === "Char.Defences.Remove") {
 		// nexusclient.sys.info(r);
 	} 
+	if (m === "Char.Items.List") {
+		if (r.location !== "room") return;
+		nexusclient.sys.itemsHere = [];
+		r.items.forEach(function(el){
+			for (let i = 0; i < nexusclient.sys.itemsHere.length; i++) {
+				if (el.id === nexusclient.sys.itemsHere[i].id) return;
+				}
+			nexusclient.sys.itemsHere.push(el);
+		});
+		nexusclient.sys.calcTarsHere();
+	}
+	if (m === "Char.Items.Add") {
+		if (r.location !== "room") return;
+		for (let i = 0; i < nexusclient.sys.itemsHere.length; i++) {
+		if (r.item.id === nexusclient.sys.itemsHere[i].id) {return;} }
+		nexusclient.sys.itemsHere.push(r.item);
+		nexusclient.sys.calcTarsHere();
+	}
+	if (m === "Char.Items.Remove") {
+		if (r.location !== "room") return;
+		for (let i = 0; i < nexusclient.sys.itemsHere.length; i++) {
+			if (r.item.id === nexusclient.sys.itemsHere[i].id) {
+				nexusclient.sys.itemsHere.splice(i,1);
+				nexusclient.sys.calcTarsHere();
+				return;
+			}
+		}
+	}
+	if (m === "Room.Info") {
+		if (r.num !== nexusclient.sys.vnum) {
+				nexusclient.sys.interrupt=false;
+			}
+		nexusclient.sys.vnum = r.num
+	}
 	return false;	
 }
 

@@ -1,5 +1,20 @@
 nexusclient.sys = {};
 
+nexusclient.sys.import = function() {
+    const urlList = [
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/bashtargets.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/interrupts.js"
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/gmcp.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/trigger.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/utils.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/shipsys.js"
+        ];
+
+    for (var url of urlList) {
+        import(url);
+    }
+}
+
 nexusclient.sys.updateButtonOne = function() {
     if (nexusclient.sys.onShip) {
         var x = nexusclient.sys.shipsys.matscan;
@@ -349,5 +364,7 @@ nexusclient.sys.harvestCacheCrystal = function() {
     }
     nexusclient.sys.info("No more crystals in room!");
 }
+
+
 
 nexusclient.sys.info("smnx3 loaded!");

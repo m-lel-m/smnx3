@@ -1,5 +1,49 @@
+nexusclient.sys.mobs = [];
+nexusclient.sys.mechanicals = [];
+
 //Full list of mobs. Aggro mobs first.
-nexusclient.sys.mobs = [
+var mobs = [
+  
+  // Quest
+  "a tropical selakki",
+  "a raging beach bully",
+  "a brutish lackey",
+  "a grumbling lackey",
+  "an irritating lackey",
+  
+  // Facility mobs
+  "an explosive globule of ichorous discharge",
+  "the pulsating, disembodied brain of the metalisk",
+  "the pulsating, disembodied heart of the metalisk",
+  "the pulsating, disembodied lungs of the metalisk",
+  "the pulsating, disembodied stomach of the metalisk",
+  "the pulsating, disembodied liver of the metalisk",
+  "the pulsating, disembodied spleen of the metalisk",
+  "a raging vihana metalisk",
+  "a two-headed, vihanized zhubeast",
+  "a three-headed, vihanized zhubeast",
+  "a four-headed, vihanized zhubeast",
+  "a five-headed, vihanized zhubeast",
+  "a six-headed, vihanized zhubeast",
+  "a seven-headed, vihanized zhubeast",
+  "an eight-headed, vihanized zhubeast",
+  "a nine-headed, vihanized zhubeast",
+  "a ten-headed, vihanized zhubeast",
+  "an eleven-headed, vihanized zhubeast",
+  "a twelve-headed, vihanized zhubeast",
+  "a thirteen-headed, vihanized zhubeast",
+  "a fourteen-headed, vihanized zhubeast",
+  "a fifteen-headed, vihanized zhubeast",
+  "a sixteen-headed, vihanized zhubeast",
+  "a vihana all-seer",
+  "a bulging metastatic slug",
+  "a bulky vihana guard",
+  "a grasping vihana acquisitor",
+  "a pulsating vihana observer",
+  "an oily-skinned vihana tracker",
+  "a misshapen vihana reject",
+  "a writhing tentacle of the inquisitor",
+  "a vihana inquisitor",
 
 // Aggressive mobs
 
@@ -149,6 +193,10 @@ nexusclient.sys.mobs = [
 	// Saksar
 	"a spot-pelted kumta",
 	"a ruby-pincered skitter",
+  
+  	// Selubir
+  	"an electric-yellow niamp",
+  	"a spine-winged hirune",
 
 	// Servius Fault
 	"a green-spotted zemani",
@@ -412,7 +460,7 @@ nexusclient.sys.mobs = [
 ];
 
 // Mechanical mobs
-nexusclient.sys.mechanicals = [
+var mechs = [
 	"a cyborg leech orchid",
 	"a rampaging construction mech",
 	"a malfunctioning remote manipulator",
@@ -450,3 +498,11 @@ nexusclient.sys.mechanicals = [
 	"an armored salvage bot",
 	"a search and rescue drone"
 	];
+
+mobs.forEach( el => {
+	nexusclient.sys.mobs.push(el.toLowerCase());
+});
+
+mechs.forEach( el => {
+	nexusclient.sys.mechanicals.push(el.toLowerCase());
+});

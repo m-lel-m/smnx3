@@ -23,7 +23,7 @@ nexusclient.sys.trigger = function(c) {
 		// nexusclient.sys.onHealBalGained();
 		return;
 	} 
-	if ((xyz = nexusclient.sys.interruptRegex.exec(c)) !== null) {
+	if ((let xyz = nexusclient.sys.interruptRegex.exec(c)) !== null) {
 		nexusclient.sys.chanTar = xyz[1];
 		nexusclient.sys.interrupt = true;
 		return;

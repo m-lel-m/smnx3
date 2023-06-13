@@ -13,8 +13,7 @@ nexusclient.sys.import = function() {
     for (var url of urlList) {
         import(url);
     }
-}
-
+};
 nexusclient.sys.updateButtonOne = function() {
     if (nexusclient.sys.onShip) {
         var x = nexusclient.sys.shipsys.matscan;
@@ -41,8 +40,7 @@ nexusclient.sys.updateButtonOne = function() {
             return;
         }
     }
-}
-
+};
 nexusclient.sys.filterElevation = function(arr) {
   var reg = /(ground|mid|high)/g;
   for (var el of arr) {
@@ -50,8 +48,7 @@ nexusclient.sys.filterElevation = function(arr) {
       return el._txt.match(reg)[0];
     }
   }
-}
-
+};
 nexusclient.sys.onRoomChange = function(newRoomInfo) {
   if (newRoomInfo.num == -2) {
     nexusclient.ui().layout().flexLayout.model.doAction({data:{tabNode:"beacon"},type:"FlexLayout_SelectTab"});
@@ -61,8 +58,7 @@ nexusclient.sys.onRoomChange = function(newRoomInfo) {
     nexusclient.ui().layout().flexLayout.model.doAction({data:{tabNode:"charvitals"},type:"FlexLayout_SelectTab"});
   }
   nexusclient.sys.harvestCacheCrystal();
-}
-
+};
 nexusclient.sys.getCleanAffList = function(obj) {
     var affs = Object.keys(obj);
     // declare list of stacking afflictions that exist in game
@@ -83,8 +79,7 @@ nexusclient.sys.getCleanAffList = function(obj) {
         if (v[0]) { result.push(v[0]); }}
     return result;
     // returned result should be a list of all affs, with stacking affs consolidated into one entry, listing only the highest stack of that aff
-}
-
+};
 nexusclient.sys.updateCharvitals = function() {
       var t = nexusclient.sys.tar;
       var cl = nexusclient.sys.class;
@@ -114,27 +109,23 @@ nexusclient.sys.updateCharvitals = function() {
       var html = "<div style='font-family:Cascadia Code;color:#ffffff;padding:5px'><label for='hp_perc'>HP: </label><meter id='hp_perc' value='"+hp_perc+"'>"+hp_perc_str+"</meter><br><label for='h_mu'>MU: </label><meter id='h_mu' value='"+h_mu+"'>"+h_mu+"</meter> ("+e_mu+")<br><label for='h_in'>IN: </label><meter id='h_in' value='"+h_in+"'>"+h_in+"</meter> ("+e_in+")<br><label for='h_se'>SE: </label><meter id='h_se' value='"+h_se+"'>"+h_se+"</meter> ("+e_se+")<br><label for='h_mi'>MI: </label><meter id='h_mi' value='"+h_mi+"'>"+h_mi+"</meter> ("+e_mi+")<br><label for='h_ww'>WW: </label><meter id='h_ww' value='"+h_ww+"'>"+h_ww+"</meter> ("+e_ww+")<p>Elevation: " + elev + "<br>WW Prios: " + wwprios + "<br>Tar: "+t+"</div>";
 
       nexusclient._ui._layout.append_custom_tab_html('charvitals', html);
-}
-
+};
 nexusclient.sys.addFreeze = function(target, stack) {
     if (!nexusclient.sys.freezeTracking[target]) {
         nexusclient.sys.freezeTracking[target] = {};
         nexusclient.sys.freezeTracking[target].count = 0;
     }
     nexusclient.sys.freezeTracking[target].count = nexusclient.sys.freezeTracking[target].count + stack;
-}
-
+};
 nexusclient.sys.resetFreeze = function(target) {
     if (!nexusclient.sys.freezeTracking[target]) { return; }
     nexusclient.sys.freezeTracking[target].count = 0;
-}
-
+};
 nexusclient.sys.resetAllFreeze = function() {
     for (var x of Object.keys(nexusclient.sys.freezeTracking)) {
         x.count = 0;
     }
-}
-
+};
 nexusclient.sys.showFreezeCount = function(target) {
     if (!nexusclient.sys.freezeTracking[target]) {
         nexusclient.display_notice(target + " not currently tracked.", "cyan");
@@ -142,45 +133,45 @@ nexusclient.sys.showFreezeCount = function(target) {
     }
     var x = nexusclient.sys.freezeTracking[target].count;
     nexusclient.display_notice("FreezeTrack (" + target + "): ", 'white', 'black', x, 'cyan', 'black');
-}
+};
+nexusclient.sys.startupVars = function() {
+    nexusclient.sys.nanodefs = [
+        { name:'Rush', cmd:'nano rush' },
+        { name:'Channeling the Progenitor', cmd:'channel progenitor' },
+        { name:'Miniaturization', cmd:'nano miniaturization' },
+        { name:'Protect', cmd:'nano protect' },
+        { name:'Intercept (muscular)', cmd:'nano intercept muscular' },
+        //{ name:'Alertness', cmd:'alertness' },
+        { name:'Improved affinity towards the Conqueror', cmd:'oblivion affinity conqueror' },
+        { name:'Improved affinity towards the Traveller', cmd:'oblivion affinity traveller' }
+        ];
 
-nexusclient.sys.nanodefs = [
-    { name:'Rush', cmd:'nano rush' },
-    { name:'Channeling the Progenitor', cmd:'channel progenitor' },
-    { name:'Miniaturization', cmd:'nano miniaturization' },
-    { name:'Protect', cmd:'nano protect' },
-    { name:'Intercept (muscular)', cmd:'nano intercept muscular' },
-    //{ name:'Alertness', cmd:'alertness' },
-    { name:'Improved affinity towards the Conqueror', cmd:'oblivion affinity conqueror' },
-    { name:'Improved affinity towards the Traveller', cmd:'oblivion affinity traveller' }
-]
-
-nexusclient.sys.class = nexusclient._datahandler.GMCP.Vitals.class;
-if (nexusclient.sys.class === "B.E.A.S.T.") { nexusclient.sys.class = "BEAST"; }
-nexusclient.sys.systems = [
-    "muscular",
-    "internal",
-    "sensory",
-    "mind",
-    "wetwiring"
-];
-nexusclient.sys.subsys = {};
-nexusclient.sys.subsys.health = {};
-nexusclient.sys.subsys.efficacy = {};
-nexusclient.sys.auto = false;
-nexusclient.sys.tar = "";
-nexusclient.sys.chanTar = "";
-nexusclient.sys.interrupt = false;
-nexusclient.sys.tarIsMech = false;
-nexusclient.sys.tarHealth = 100;
-nexusclient.sys.tarsHere = 0;
-nexusclient.sys.vnum = 0;
-nexusclient.sys.hp_heal_threshold = 0.7;
-nexusclient.sys.canFrenzy = true;
-nexusclient.sys.keepupVacsphere = false;
-nexusclient.sys.autoheal = true;
-nexusclient.sys.freezeTracking = {};
-
+    nexusclient.sys.class = nexusclient._datahandler.GMCP.Vitals.class;
+    if (nexusclient.sys.class === "B.E.A.S.T.") { nexusclient.sys.class = "BEAST"; }
+    nexusclient.sys.systems = [
+        "muscular",
+        "internal",
+        "sensory",
+        "mind",
+        "wetwiring"
+        ];
+    nexusclient.sys.subsys = {};
+    nexusclient.sys.subsys.health = {};
+    nexusclient.sys.subsys.efficacy = {};
+    nexusclient.sys.auto = false;
+    nexusclient.sys.tar = "";
+    nexusclient.sys.chanTar = "";
+    nexusclient.sys.interrupt = false;
+    nexusclient.sys.tarIsMech = false;
+    nexusclient.sys.tarHealth = 100;
+    nexusclient.sys.tarsHere = 0;
+    nexusclient.sys.vnum = 0;
+    nexusclient.sys.hp_heal_threshold = 0.7;
+    nexusclient.sys.canFrenzy = true;
+    nexusclient.sys.keepupVacsphere = false;
+    nexusclient.sys.autoheal = true;
+    nexusclient.sys.freezeTracking = {};
+};
 nexusclient.sys.doAutoHeal = function() {
     if (nexusclient.sys.auto || nexusclient.dontinterrupt) { return; }
     if (nexusclient.sys.autoheal) { 
@@ -197,8 +188,7 @@ nexusclient.sys.doAutoHeal = function() {
             return;
         }
     } 
-}
-
+};
 nexusclient.sys.getClassHeal = function () {
     switch (nexusclient.sys.class) {
     case "Engineer":
@@ -347,10 +337,9 @@ nexusclient.sys.nextDefup = function() {
         nexusclient.sys.info("All defups complete!");
         nexusclient.sys.needdefs = false;
     }
-}
-
+};
 nexusclient.sys.onBal = function () {
-    if (nexusclient.sys.needdefs) { nexusclient.send_commands("defup"); }
+    if (nexusclient.sys.needdefs) { nexusclient.sys.nextDefup(); }
     if (!nexusclient.sys.auto) { return; }
     if (!nexusclient.sys.bal) { return; }
     let needInterrupt = nexusclient.sys.needInterrupt();
@@ -373,7 +362,6 @@ nexusclient.sys.onBal = function () {
         nexusclient.sys.attack();
     }
 };
-
 nexusclient.sys.harvestCacheCrystal = function() {
     let playersHere = nexusclient._datahandler.GMCP.RoomPlayers;
     for (var item of nexusclient.sys.itemsHere) {
@@ -383,4 +371,4 @@ nexusclient.sys.harvestCacheCrystal = function() {
         }
     }
     nexusclient.sys.info("No more crystals in room!");
-}
+};

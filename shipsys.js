@@ -8,7 +8,7 @@ nexusclient.sys.shipsys.autobeacon = false;
 nexusclient.sys.shipsys.matscan = "any";
 nexusclient.sys.shipsys.beacon = [];
 
-run_function("ShipTargets", "", "ship pkg");
+nexusclient.reflexes().run_function("ShipTargets", "", "ship pkg");
 
 nexusclient.sys.shipsys.getShipBearing = function(num) {
   const dirt = [ "", "n", "ne", "e", "se", "s", "sw", "w", "nw" ];
@@ -129,7 +129,7 @@ nexusclient.sys.shipsys.findMineInBeacon = function(typ) {
     }
   }
 
-  display_notice("No material type " + typ + " found.", "red");
+  nexusclient.display_notice("No material type " + typ + " found.", "red");
   return false;
 }
 
@@ -144,14 +144,14 @@ nexusclient.sys.shipsys.parseBeaconEnd = function() {
 
   var s = i.coordinates.replace(",", " ");
   if (nexusclient.sys.shipsys.aroundAutopilotGoal(s, 4)) {
-    send_command("ship halt");
-    send_command("ship turn " + i.direction);
+    nexusclient.sys.send("ship halt");
+    nexusclient.sys.send("ship turn " + i.direction);
     nexusclient.sys.shipsys.matfound = true;
     return;
       }
   var s = i.sector + " " + s;
-  send_command("ship travel to " + s);
-  display_notice("[SHIP] Autopilot Coords: " + s,'white');
+  nexusclient.sys.send("ship travel to " + s);
+  nexusclient.display_notice("[SHIP] Autopilot Coords: " + s,'white');
 
 }
 

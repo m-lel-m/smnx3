@@ -77,7 +77,7 @@ nexusclient.sys.trigger = function(c) {
       		send_GMCP("Char.Items.Room", "");
       		nexusclient.sys.updateCharvitals();
         }
-		if (nexusclient.sys.affstring) { display_notice(nexusclient.sys.affstring); }
+		if (nexusclient.sys.affstring) { nexusclient.display_notice(nexusclient.sys.affstring); }
 		return;
     }
     	
@@ -85,6 +85,6 @@ nexusclient.sys.trigger = function(c) {
 }
 
 nexusclient.sys.echoTrigger = function(r) {
-	display_notice(r);
+	nexusclient.display_notice(r);
 	nexusclient.sys.trigger(r);
 }

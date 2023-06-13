@@ -137,11 +137,11 @@ nexusclient.sys.resetAllFreeze = function() {
 
 nexusclient.sys.showFreezeCount = function(target) {
     if (!nexusclient.sys.freezeTracking[target]) {
-        display_notice(target + " not currently tracked.", "cyan");
+        nexusclient.display_notice(target + " not currently tracked.", "cyan");
         return;
     }
     var x = nexusclient.sys.freezeTracking[target].count;
-    display_notice("FreezeTrack (" + target + "): ", 'white', 'black', x, 'cyan', 'black');
+    nexusclient.display_notice("FreezeTrack (" + target + "): ", 'white', 'black', x, 'cyan', 'black');
 }
 
 nexusclient.sys.nanodefs = [
@@ -254,7 +254,7 @@ nexusclient.sys.tarCheck = function () {
             }
         }
     }
-    display_notice("No mobs here.", "red");
+    nexusclient.display_notice("No mobs here.", "red");
     return false;
 };
 nexusclient.sys.setTar = function (t) {
@@ -350,7 +350,7 @@ nexusclient.sys.nextDefup = function() {
 }
 
 nexusclient.sys.onBal = function () {
-    if (nexusclient.sys.needdefs) { send_command("defup"); }
+    if (nexusclient.sys.needdefs) { nexusclient.send_commands("defup"); }
     if (!nexusclient.sys.auto) { return; }
     if (!nexusclient.sys.bal) { return; }
     let needInterrupt = nexusclient.sys.needInterrupt();

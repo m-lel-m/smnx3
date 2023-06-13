@@ -87,11 +87,11 @@ nexusclient.sys.gmcp = function(m, r) {
 
 		if (logins.length > 0) { 
 			nexusclient.sdb.functions.lookupArray(logins);
-			display_notice("Logged In: "+logins.join(", "), "yellow");
+			nexusclient.display_notice("Logged In: "+logins.join(", "), "yellow");
 		}
 		if (logouts.length > 0) { 
 			nexusclient.sdb.functions.lookupArray(logouts);
-			display_notice("Logged Out: "+logouts.join(", "), "yellow");
+			nexusclient.display_notice("Logged Out: "+logouts.join(", "), "yellow");
 		}
 	}
 
@@ -150,17 +150,17 @@ nexusclient.sys.parseCombatMessage = function(r) {
 	default:
 	}
 	if (msg.includes("-> distraction")) {
-		display_notice("Opponent has distraction! Can attempt to inflict sluggish!", 'red');
+		nexusclient.display_notice("Opponent has distraction! Can attempt to inflict sluggish!", 'red');
 		nexusclient.mml.hasDistract = true;
 		return;
 	}
   	if (msg.includes("distraction ->")) {
-      	display_notice("Opponent lost distraction!", 'red');
+      	nexusclient.display_notice("Opponent lost distraction!", 'red');
       	nexusclient.mml.hasDistract = false;
       	return;
     }
   	if (msg.includes("sluggish ->")) {
-      	display_notice("Opponent lost sluggish!", 'red');
+      	nexusclient.display_notice("Opponent lost sluggish!", 'red');
       	nexusclient.mml.hasSluggish = false;
       	return;
     }

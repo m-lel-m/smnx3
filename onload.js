@@ -15,6 +15,10 @@ nexusclient.sys.import = function() {
     }
 };
 nexusclient.sys.startupVars = function() {
+    nexusclient.sys.subsys = {};
+    nexusclient.sys.subsys.health = {};
+    nexusclient.sys.subsys.efficacy = {};
+    nexusclient.sys.shipsys = {};
     nexusclient.sys.nanodefs = [
         { name:'Rush', cmd:'nano rush' },
         { name:'Channeling the Progenitor', cmd:'channel progenitor' },
@@ -25,7 +29,6 @@ nexusclient.sys.startupVars = function() {
         { name:'Improved affinity towards the Conqueror', cmd:'oblivion affinity conqueror' },
         { name:'Improved affinity towards the Traveller', cmd:'oblivion affinity traveller' }
         ];
-
     nexusclient.sys.class = nexusclient._datahandler.GMCP.Vitals.class;
     if (nexusclient.sys.class === "B.E.A.S.T.") { nexusclient.sys.class = "BEAST"; }
     nexusclient.sys.systems = [
@@ -35,9 +38,13 @@ nexusclient.sys.startupVars = function() {
         "mind",
         "wetwiring"
         ];
-    nexusclient.sys.subsys = {};
-    nexusclient.sys.subsys.health = {};
-    nexusclient.sys.subsys.efficacy = {};
+    nexusclient.sys.shipsys.matfound = false;
+    nexusclient.sys.shipsys.traveling = false;
+    nexusclient.sys.shipsys.matonbeacon = false;
+    nexusclient.sys.shipsys.automine = false;
+    nexusclient.sys.shipsys.autobeacon = false;
+    nexusclient.sys.shipsys.matscan = "any";
+    nexusclient.sys.shipsys.beacon = [];
     nexusclient.sys.auto = false;
     nexusclient.sys.tar = "";
     nexusclient.sys.chanTar = "";
@@ -52,6 +59,7 @@ nexusclient.sys.startupVars = function() {
     nexusclient.sys.autoheal = true;
     nexusclient.sys.freezeTracking = {};
     nexusclient.sys.currentDefences = [];
+    nexusclient.sys.shipsys.setShipTargetList();
     nexusclient.sys.webhooklist = {
         tells: "https://discord.com/api/webhooks/654432870953385995/VH2eq-7GQDsa0J52sdwmrTbo_ECC2PELZqTVkZJROA85llI5j_8C0p3nW55s7ZebarGS",
         scatterhome: "https://discord.com/api/webhooks/654426733914882068/MvlsrnUOnAmdBiyBuAB5zsjB2JRjTXvZtaBezwVMozHgthlhGQuLxNByzSJ6rsRMw3-s",
@@ -127,7 +135,7 @@ nexusclient.sys.getCleanAffList = function(obj) {
         // generate lists for each individual stacking aff
         test[a] = []; 
         // populate with all stacks
-        for (var aff of affs) { if (aff.includes(a)) { test[a].push(aff) } }
+        for (var aff of affs) { if (aff.includes(a)) { test[a].push(aff); } }
     }
     for (var v of Object.values(test)) {
         // remove all but the highest stack
@@ -309,7 +317,8 @@ nexusclient.sys.reset = function () {
     nexusclient.sys.vacsphere = false;
     nexusclient.sys.tar = "";
     nexusclient.sys.tarIsMech = false;
-  nexusclient.sys.mindsub = {};
+    nexusclient.sys.mindsub = {};
+    nexusclient.sys.resetAllFreeze();
 };
 nexusclient.sys.onDeath = function () {
     nexusclient.sys.reset();
@@ -387,7 +396,7 @@ nexusclient.sys.harvestCacheCrystal = function() {
     if (!area.includes("wilderness")) { return; }
     for (var item of nexusclient.sys.itemsHere) {
         if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0) {
-            nexusclient.sys.send("harvest crystal")
+            nexusclient.sys.send("harvest crystal");
             return;
         }
     }

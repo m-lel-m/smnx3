@@ -23,21 +23,21 @@ nexusclient.sys.gmcp = function(m, r) {
 		}
 		nexusclient.sys.updateButtonOne();
 		nexusclient.sys.doAutoHeal();
-	};
+	}
 	if (m === "IRE.Target.Info") {
-		nexusclient.sys.tarHealth = parseInt(r.hpperc.replace("%",""))
-	};
+		nexusclient.sys.tarHealth = parseInt(r.hpperc.replace("%",""));
+	}
   	if (m === "Char.Afflictions.List" || m === "Char.Afflictions.Add" || m === "Char.Afflictions.Remove") {
       	nexusclient.sys.affstring = nexusclient.sys.getCleanAffList(nexusclient._datahandler.GMCP.Afflictions).join(", ");
-    };
+    }
     if (m === "Char.Defences.List") {
     	nexusclient.sys.currentDefences = Object.values(r).map(object => object.desc);
-    };
+    }
     if (m === "Char.Defences.Add") {
     	if (!nexusclient.sys.currentDefences.includes(r.desc)) {
     		nexusclient.sys.currentDefences.push(r.desc);
     	}
-    };
+    }
 	if (m === "Char.Items.List") {
 		if (r.location !== "room") {return;}
 		nexusclient.sys.itemsHere = [];
@@ -48,7 +48,7 @@ nexusclient.sys.gmcp = function(m, r) {
 			nexusclient.sys.itemsHere.push(el);
 		});
 		nexusclient.sys.calcTarsHere();
-	};
+	}
 	if (m === "Char.Items.Add") {
 		if (r.location !== "room") {return;}
 		for (var i in nexusclient.sys.itemsHere) {
@@ -56,7 +56,7 @@ nexusclient.sys.gmcp = function(m, r) {
 		nexusclient.sys.itemsHere.push(r.item);
 		nexusclient.sys.calcTarsHere();
         }
-	};
+	}
 	if (m === "Char.Items.Remove") {
 		if (r.location !== "room") {return;}
 		for (var x in nexusclient.sys.itemsHere) {
@@ -66,15 +66,15 @@ nexusclient.sys.gmcp = function(m, r) {
 				return;
 			}
 		}
-	};
+	}
 	if (m === "Room.Info") {
 		if (r.num !== nexusclient.sys.vnum) {
 				nexusclient.sys.interrupt=false;
            		nexusclient.sys.vacsphere = false;
           		nexusclient.sys.onRoomChange(r);
 			}
-		nexusclient.sys.vnum = r.num
-	};
+		nexusclient.sys.vnum = r.num;
+	}
 	if (m === "Comm.Channel.Players") {
 		const playerList = Object.values(r).map(object => object.name);
 		if (!nexusclient.sdb.old_online) { nexusclient.sdb.old_online = []; }
@@ -94,20 +94,21 @@ nexusclient.sys.gmcp = function(m, r) {
 			nexusclient.sdb.functions.lookupArray(logouts);
 			nexusclient.sys.playerTraffic("Logged Out: "+logouts.join(", "));
 		}
-	};
+	}
 	if (m === "Comm.Channel.Text") {
 		var chan = r.channel;
 		if (chan.includes("tell")) { var chan = "tells"; }
 		var msg = nexusclient.sys.stripAnsiCodes(r.text);
 		nexusclient.sys.webhookMap(chan, msg);
-	};
+	}
   	if (m === "IRE.CombatMessage") {
         nexusclient.sys.parseCombatMessage(r);
-    };
+    }
 	return false;	
-}
-
+};
 nexusclient.sys.parseCombatMessage = function(r) {
+	var caster;
+	var target;
 	for (var msg in r) {
 		msg = msg.toLowerCase();
 		var caster = r[msg].caster;
@@ -181,4 +182,4 @@ nexusclient.sys.parseCombatMessage = function(r) {
     		nexusclient.sys.addFreeze(p, 3);
     	}
     }
-}
+};

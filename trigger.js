@@ -82,11 +82,9 @@ nexusclient.sys.trigger = function(c) {
 		if (nexusclient.sys.affstring) { nexusclient.sys.combatInfo(nexusclient.sys.affstring); }
 		return;
     }
-    	
 	return false;
-}
-
+};
 nexusclient.sys.echoTrigger = function(r) {
 	nexusclient.display_notice(r);
 	nexusclient.sys.trigger(r);
-}
+};

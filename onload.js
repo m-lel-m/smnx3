@@ -349,7 +349,8 @@ nexusclient.sys.nextDefup = function() {
     var currentDefs = nexusclient.sys.currentDefences;
     for (var d of nexusclient.sys.nanodefs) { 
         if (!currentDefs.includes(d.name)) {
-            return d.cmd;
+            nexusclient.sys.send(d.cmd);
+            return;
         }
     }
     nexusclient.sys.info("All defups complete!");

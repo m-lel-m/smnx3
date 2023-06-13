@@ -108,7 +108,7 @@ nexusclient.sys.gmcp = function(m, r) {
 }
 
 nexusclient.sys.parseCombatMessage = function(r) {
-	for (let msg in r) {
+	for (var msg in r) {
 		msg = msg.toLowerCase();
 		var caster = r[msg].caster;
 		var target = r[msg].target;

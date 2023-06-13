@@ -145,6 +145,8 @@ nexusclient.sys.parseCombatMessage = function(r) {
 	case "void point zero":
 		nexusclient.sys.pzHere = true;
 		break;
+	case "voidism embrace":
+		nexusclient.sys.sentHeal = false;
 	default:
 	}
 	if (msg.includes("-> distraction")) {

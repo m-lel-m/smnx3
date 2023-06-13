@@ -112,13 +112,13 @@ nexusclient.sys.listcompare = function(a1, a2) {
 
 nexusclient.sys.nanodefs = [
     { name:'Rush', cmd:'nano rush' },
-    { name:'Channeling the Traveller', cmd:'channel traveller' },
+    { name:'Channeling the Progenitor', cmd:'channel progenitor' },
     { name:'Miniaturization', cmd:'nano miniaturization' },
     { name:'Protect', cmd:'nano protect' },
     { name:'Intercept (muscular)', cmd:'nano intercept muscular' },
     //{ name:'Alertness', cmd:'alertness' },
     { name:'Improved affinity towards the Conqueror', cmd:'oblivion affinity conqueror' },
-    { name:'Improved affinity towards the Progenitor', cmd:'oblivion affinity progenitor' }
+    { name:'Improved affinity towards the Traveller', cmd:'oblivion affinity traveller' }
 ]
 
 nexusclient.sys.class = nexusclient._datahandler.GMCP.Vitals.class;
@@ -313,6 +313,7 @@ nexusclient.sys.nextDefup = function() {
         nexusclient.sys.needdefs = false;
     }
 }
+
 nexusclient.sys.onBal = function () {
     if (nexusclient.sys.needdefs) { send_command("defup"); }
     if (!nexusclient.sys.auto) { return; }

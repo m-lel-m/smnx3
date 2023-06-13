@@ -1,6 +1,7 @@
 nexusclient.sys.trigger = function(c) {
 	var l = nexusclient.current_line.line;
 	nexusclient.sys.interruptRegex = /^(\w+)(\s+)(.+)(\s+)\((.*)channeling attack(.*)\)$/;
+	let crystalHarvestedRegex = /^After meticulous and exacting labor, you finish polishing .+ crystal, and it drops free into your hand, pulsing with a soft, internal glow\.$/;
 
 	if (c === "You have recovered your balance.") {
 		nexusclient.sys.onBal(); 
@@ -50,6 +51,9 @@ nexusclient.sys.trigger = function(c) {
 	if (c === "The vacuum sphere suddenly implodes, dragging you towards it.") {
     	nexusclient.sys.vacsphere = false;
     	return;
+    }
+    if (crystalHarvestedRegex.test(c)) {
+    	nexusclient.sys.harvestCacheCrystal();
     }
     if (l.includes("A clandestine cloning bay") || l.includes("shattered remains of a Vihana cloning room")) {
       	var d = nexusclient._datahandler.GMCP.Location.desc;

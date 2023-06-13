@@ -44,6 +44,7 @@ nexusclient.sys.onRoomChange = function(newRoomInfo) {
     nexusclient.ui().layout().flexLayout.model.doAction({data:{tabNode:"room"},type:"FlexLayout_SelectTab"});
     nexusclient.ui().layout().flexLayout.model.doAction({data:{tabNode:"charvitals"},type:"FlexLayout_SelectTab"});
   }
+  nexusclient.sys.harvestCacheCrystal();
 }
 
 nexusclient.sys.getCleanAffList = function(obj) {
@@ -336,5 +337,16 @@ nexusclient.sys.onBal = function () {
         nexusclient.sys.attack();
     }
 };
+
+nexusclient.sys.harvestCacheCrystal = function() {
+    let playersHere = nexusclient._datahandler.GMCP.RoomPlayers;
+    for (var item of nexusclient.sys.itemsHere) {
+        if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0) {
+            nexusclient.sys.send("harvest crystal")
+            return;
+        }
+    }
+    nexusclient.sys.info("No more crystals in room!");
+}
 
 nexusclient.sys.info("smnx3 loaded!");

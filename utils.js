@@ -5,7 +5,27 @@ nexusclient.sys.send = function (cmd) {
 };
 
 nexusclient.sys.info = function (m) {
-    nexusclient.display_notice("[SYS-INFO]: " + m, "white");
+    nexusclient.display_notice("[SYS-INFO]: ", "#00ff00", "", m, "white", "");
+};
+
+nexusclient.sys.alert = function(m) {
+	nexusclient.display_notice("[SYS-ALERT]: ", "red", "", m, "white", "");
+};
+
+nexusclient.sys.notif = function(m) {
+	nexusclient.display_notice("[SYS-NOTIF]: ", "yellow", "", m, "white", "");
+};
+
+nexusclient.sys.combatInfo = function(m) {
+	nexusclient.display_notice("[SYS-CINFO]: ", "cyan", "", m, "white", "");
+};
+
+nexusclient.sys.shipInfo = function(m) {
+	nexusclient.display_notice("[SYS-SHIP]: ", "#ff00ff", "", m, "white", "");
+};
+
+nexusclient.sys.playerTraffic = function(m) {
+	nexusclient.display_notice("[SYS-LOG]: ", "gray", "", m, "white", "");
 };
 
 nexusclient.sys.listcompare = function(a1, a2) {

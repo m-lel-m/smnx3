@@ -129,7 +129,7 @@ nexusclient.sys.shipsys.findMineInBeacon = function(typ) {
     }
   }
 
-  nexusclient.display_notice("No material type " + typ + " found.", "red");
+  nexusclient.sys.alert("No material type " + typ + " found.");
   return false;
 }
 
@@ -151,7 +151,7 @@ nexusclient.sys.shipsys.parseBeaconEnd = function() {
       }
   var s = i.sector + " " + s;
   nexusclient.sys.send("ship travel to " + s);
-  nexusclient.display_notice("[SHIP] Autopilot Coords: " + s,'white');
+  nexusclient.sys.shipInfo("Autopilot Coords: " + s);
 
 }
 

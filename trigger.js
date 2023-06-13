@@ -55,6 +55,7 @@ nexusclient.sys.trigger = function(c) {
     }
     if (crystalHarvestedRegex.test(c)) {
     	nexusclient.sys.harvestCacheCrystal();
+    	return;
     }
     if (l.includes("A clandestine cloning bay") || l.includes("shattered remains of a Vihana cloning room")) {
       	var d = nexusclient._datahandler.GMCP.Location.desc;
@@ -78,7 +79,7 @@ nexusclient.sys.trigger = function(c) {
       		nexusclient._datahandler.send_GMCP("Char.Items.Room", "");
       		nexusclient.sys.updateCharvitals();
         }
-		if (nexusclient.sys.affstring) { nexusclient.display_notice(nexusclient.sys.affstring); }
+		if (nexusclient.sys.affstring) { nexusclient.sys.combatInfo(nexusclient.sys.affstring); }
 		return;
     }
     	

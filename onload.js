@@ -384,7 +384,3 @@ nexusclient.sys.harvestCacheCrystal = function() {
     }
     nexusclient.sys.info("No more crystals in room!");
 }
-
-
-
-nexusclient.sys.info("smnx3 loaded!");

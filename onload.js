@@ -115,8 +115,6 @@ nexusclient.sys.updateCharvitals = function() {
       append_custom_tab_html('charvitals', html);
 }
 
----
-
 nexusclient.sys.addFreeze = function(target, stack) {
     if (!nexusclient.sys.freezeTracking[target]) {
         nexusclient.sys.freezeTracking[target] = {};
@@ -144,8 +142,6 @@ nexusclient.sys.showFreezeCount = function(target) {
     var x = nexusclient.sys.freezeTracking[target].count;
     display_notice("FreezeTrack (" + target + "): ", 'white', 'black', x, 'cyan', 'black');
 }
-
----
 
 nexusclient.sys.nanodefs = [
     { name:'Rush', cmd:'nano rush' },

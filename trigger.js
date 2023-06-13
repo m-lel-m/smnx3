@@ -1,6 +1,7 @@
 nexusclient.sys.trigger = function(c) {
 	var l = nexusclient.current_line.line;
 	nexusclient.sys.interruptRegex = /^(\w+)(\s+)(.+)(\s+)\((.*)channeling attack(.*)\)$/;
+	let xyz;
 	let crystalHarvestedRegex = /^After meticulous and exacting labor, you finish polishing .+ crystal, and it drops free into your hand, pulsing with a soft, internal glow\.$/;
 
 	if (c === "You have recovered your balance.") {
@@ -23,7 +24,7 @@ nexusclient.sys.trigger = function(c) {
 		// nexusclient.sys.onHealBalGained();
 		return;
 	} 
-	if ((let xyz = nexusclient.sys.interruptRegex.exec(c)) !== null) {
+	if ((xyz = nexusclient.sys.interruptRegex.exec(c)) !== null) {
 		nexusclient.sys.chanTar = xyz[1];
 		nexusclient.sys.interrupt = true;
 		return;
@@ -74,7 +75,7 @@ nexusclient.sys.trigger = function(c) {
       	if (nexusclient.sys.elevation != e) {
       		nexusclient.sys.elevation = e;
       		if (nexusclient.sys.auto) { nexusclient.sys.onBal(); }
-      		send_GMCP("Char.Items.Room", "");
+      		nexusclient._datahandler.send_GMCP("Char.Items.Room", "");
       		nexusclient.sys.updateCharvitals();
         }
 		if (nexusclient.sys.affstring) { nexusclient.display_notice(nexusclient.sys.affstring); }

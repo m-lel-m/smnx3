@@ -12,7 +12,7 @@ nexusclient.reflexes().run_function("ShipTargets", "", "ship pkg");
 
 nexusclient.sys.shipsys.getShipBearing = function(num) {
   const dirt = [ "", "n", "ne", "e", "se", "s", "sw", "w", "nw" ];
-  var x = to_number(num);
+  var x = parseInt(num);
   return dirt[x];
 }
 
@@ -34,9 +34,9 @@ nexusclient.sys.shipsys.updateShipvitals = function() {
   var dir = nexusclient._datahandler.GMCP.Vitals.ship_bearing;
   var dir = nexusclient.sys.shipsys.getShipBearing(dir);
   var ship_speed = nexusclient._datahandler.GMCP.Vitals.ship_speed;
-  var hull_perc = (to_number(nexusclient._datahandler.GMCP.Vitals.ship_hull)/to_number(nexusclient._datahandler.GMCP.Vitals.ship_hull_max));
-  var shield_perc = (to_number(nexusclient._datahandler.GMCP.Vitals.ship_shield)/to_number(nexusclient._datahandler.GMCP.Vitals.ship_shield_max)); 
-  var cap_perc = (to_number(nexusclient._datahandler.GMCP.Vitals.ship_cap)/to_number(nexusclient._datahandler.GMCP.Vitals.ship_cap_max)); 
+  var hull_perc = (parseInt(nexusclient._datahandler.GMCP.Vitals.ship_hull)/parseInt(nexusclient._datahandler.GMCP.Vitals.ship_hull_max));
+  var shield_perc = (parseInt(nexusclient._datahandler.GMCP.Vitals.ship_shield)/parseInt(nexusclient._datahandler.GMCP.Vitals.ship_shield_max)); 
+  var cap_perc = (parseInt(nexusclient._datahandler.GMCP.Vitals.ship_cap)/parseInt(nexusclient._datahandler.GMCP.Vitals.ship_cap_max)); 
   var hull_perc_str = (hull_perc * 100) + "%";
   var shield_perc_str = (shield_perc * 100) + "%";
   var cap_perc_str = (cap_perc * 100) + "%";
@@ -49,11 +49,11 @@ nexusclient.sys.shipsys.updateShipvitals = function() {
 
   var header = "<span style='font-family:Cascadia Code;color:#ffffff;padding:5px;font-size:1.1em'>" + loc + "</span><br><span style='font-family:Cascadia Code;color:#ffffff;padding:5px'>Ship: " + ship_name + "<br><span style='padding:5px'>Bearing: " + dir + "<br><span style='padding:5px'>Speed: " + ship_speed + "</span><p>";
 
-  set_custom_tab_html('shipvitals', header);
+  nexusclient._ui._layout.set_custom_tab_html('shipvitals', header);
 
   var html = "<span style='font-family:Cascadia Code;color:#ffffff;padding:5px'><label for='hull_perc'>Hull: &nbsp;&nbsp;</label><meter id='hull_perc' value='"+hull_perc+"'>"+hull_perc_str+"</meter><br><span style='padding:5px'><label for='shield_perc'>Shield: </label><meter id='shield_perc' value='"+shield_perc+"'>"+shield_perc_str+"</meter><br><span style='padding:5px'><label for='cap_perc'>Cap: &nbsp;&nbsp;&nbsp;</label><meter id='cap_perc' value='"+cap_perc+"'>"+cap_perc_str+"</meter><p><p style='font-family:Cascadia Code;color:#ffffff;padding:5px'>Ship Damage<br>Cap: "+cap_dmg+"<br>Eng: "+eng_dmg+"<br>Sen: "+sen_dmg+"<br>Shi: "+shi_dmg+"<br>Sim: "+sim_dmg+"</p>";
 
-  append_custom_tab_html('shipvitals', html);
+  nexusclient._ui._layout.append_custom_tab_html('shipvitals', html);
 }
 
 nexusclient.sys.shipsys.getBeaconLineColor = function(beaconstring) {
@@ -70,9 +70,9 @@ nexusclient.sys.shipsys.parseBeaconStart = function() {
   nexusclient.sys.shipsys.beacon = [];
   var header = "<span style='font-family:Cascadia Code;color:#ffffff'>&nbsp;Ship Beacon<p>";
 
-  set_custom_tab_html('beacon', "");
+  nexusclient._ui._layout.set_custom_tab_html('beacon', "");
   
-  append_custom_tab_html('beacon', header);
+  nexusclient._ui._layout.append_custom_tab_html('beacon', header);
 
 }
 
@@ -102,7 +102,7 @@ nexusclient.sys.shipsys.updateBeaconTabLine = function(dist, dir, sector, coords
   var bstring = "<span style='font-family:Cascadia Code;color:" + color + "'>" + beaconstring + "</span>";
   var output = "<span style='font-family:Cascadia Code;font-size:12px'>" + output + bstring + coords + "</span><br>";
 
-  append_custom_tab_html('beacon', output);
+  nexusclient._ui._layout.append_custom_tab_html('beacon', output);
 
 }
 
@@ -158,7 +158,7 @@ nexusclient.sys.shipsys.parseBeaconEnd = function() {
 nexusclient.sys.shipsys.aroundAutopilotGoal = function(goal, tolerance) {
 
   var c = nexusclient._datahandler.GMCP.Location.area;
-  var t = to_number(tolerance);
+  var t = parseInt(tolerance);
   const regex = /(\(\d+, \d+\))/g;
   var f = c.match(regex);
   var f = f[0].replace("(","");
@@ -213,8 +213,7 @@ nexusclient.sys.shipsys.updateTargetButtons = function() {
 		var i = buttonId-2;
 		if (!nexusclient.sys.shipsys.shipButtonTargets[i]) {return;}
       var tlist = nexusclient.sys.shipsys.shipButtonTargets[i];
-		buttons_set_label(buttonId, tlist.short + ":" + tlist.dist + " " + tlist.dir);
-		buttons_set_commands(buttonId, "st " + tlist.short + "|ship turn " + tlist.dir);
-      nexusclient.sys.shipsys.shipTar = tlist.short;
+		nexusclient._ui._buttons.set(buttonId, "st " + tlist.short + "|ship turn " + tlist.dir, '', tlist.short + ":" + tlist.dist + " " + tlist.dir, '');
+    nexusclient.sys.shipsys.shipTar = tlist.short;
 	} 
 }

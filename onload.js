@@ -19,25 +19,25 @@ nexusclient.sys.updateButtonOne = function() {
     if (nexusclient.sys.onShip) {
         var x = nexusclient.sys.shipsys.matscan;
         if (nexusclient.sys.shipsys.automine) {
-            buttons_set_label(1, "MINE ("+x+")");
-            buttons_set_highlight(1, 1);
+            nexusclient._ui._buttons.set(1, '', '', "MINE ("+x+")", '');
+            nexusclient._ui._buttons.highlight_button(1, 1);
             return;
         }
         if (!nexusclient.sys.shipsys.automine) {
-            buttons_set_label(1, "MINE ("+x+")");
-            buttons_set_highlight(1, 0);
+            nexusclient._ui._buttons.set(1, '', '', "MINE ("+x+")", '');
+            nexusclient._ui._buttons.highlight_button(1, 0);
             return;
         }
     }
     if (!nexusclient.sys.onShip) {
         if (nexusclient.sys.auto) {
-            buttons_set_label(1, "HUNT");
-            buttons_set_highlight(1, 1);
+            nexusclient._ui._buttons.set(1, '', '', "HUNT", '');
+            nexusclient._ui._buttons.highlight_button(1, 1);
             return;
         }
         if (!nexusclient.sys.auto) {
-            buttons_set_label(1, "HUNT");
-            buttons_set_highlight(1, 0);
+            nexusclient._ui._buttons.set(1, '', '', "HUNT", '');
+            nexusclient._ui._buttons.highlight_button(1, 0);
             return;
         }
     }
@@ -109,11 +109,11 @@ nexusclient.sys.updateCharvitals = function() {
 
       var header = "<span style='font-family:Cascadia Code;color:#ffffff;padding:5px'>Class: " + cl + "<br><span style='padding:5px'>Sanity: " + sa + "<br><span style='padding:5px'>Nanites: " + nn + "</span><p>";
 
-      set_custom_tab_html('charvitals', header);
+      nexusclient._ui._layout.set_custom_tab_html('charvitals', header);
 
       var html = "<div style='font-family:Cascadia Code;color:#ffffff;padding:5px'><label for='hp_perc'>HP: </label><meter id='hp_perc' value='"+hp_perc+"'>"+hp_perc_str+"</meter><br><label for='h_mu'>MU: </label><meter id='h_mu' value='"+h_mu+"'>"+h_mu+"</meter> ("+e_mu+")<br><label for='h_in'>IN: </label><meter id='h_in' value='"+h_in+"'>"+h_in+"</meter> ("+e_in+")<br><label for='h_se'>SE: </label><meter id='h_se' value='"+h_se+"'>"+h_se+"</meter> ("+e_se+")<br><label for='h_mi'>MI: </label><meter id='h_mi' value='"+h_mi+"'>"+h_mi+"</meter> ("+e_mi+")<br><label for='h_ww'>WW: </label><meter id='h_ww' value='"+h_ww+"'>"+h_ww+"</meter> ("+e_ww+")<p>Elevation: " + elev + "<br>WW Prios: " + wwprios + "<br>Tar: "+t+"</div>";
 
-      append_custom_tab_html('charvitals', html);
+      nexusclient._ui._layout.append_custom_tab_html('charvitals', html);
 }
 
 nexusclient.sys.addFreeze = function(target, stack) {
@@ -215,7 +215,7 @@ nexusclient.sys.getClassHeal = function () {
 };
 nexusclient.sys.onKill = function () {
     nexusclient.sys.interrupt = false;
-    send_GMCP("Char.Items.Room", "");
+    nexusclient._datahandler.send_GMCP("Char.Items.Room", "");
     nexusclient.sys.tarCheck();
     nexusclient.sys.mindsub = {};
 };
@@ -259,7 +259,7 @@ nexusclient.sys.tarCheck = function () {
 };
 nexusclient.sys.setTar = function (t) {
     nexusclient.sys.tar = t;
-    send_GMCP("IRE.Target.Set", nexusclient.sys.tar);
+    nexusclient._datahandler.send_GMCP("IRE.Target.Set", nexusclient.sys.tar);
     nexusclient.sys.tarIsMech=false;
     var mobsHere = nexusclient.sys.itemsHere;
     var found = false;
@@ -306,7 +306,7 @@ nexusclient.sys.onDeath = function () {
     if (nexusclient.sys.auto) {
         nexusclient.sys.info("You've died. Autohunting stopped.");
         nexusclient.sys.auto = false;
-      buttons_set_label(1, "AH OFF");
+      nexusclient._ui._buttons.set(1, '', '', "AH OFF", '');
     }
 };
 nexusclient.sys.needHeal = function () {

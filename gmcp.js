@@ -147,6 +147,7 @@ nexusclient.sys.parseCombatMessage = function(r) {
 		break;
 	case "voidism embrace":
 		nexusclient.sys.sentHeal = false;
+		break;
 	default:
 	}
 	if (msg.includes("-> distraction")) {

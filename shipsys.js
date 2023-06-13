@@ -1,4 +1,4 @@
-if (!nexusclient.sys.shipsys) {nexusclient.shippy = {};}
+if (!nexusclient.sys.shipsys) {nexusclient.sys.shipsys = {};}
 
 nexusclient.sys.shipsys.matfound = false;
 nexusclient.sys.shipsys.traveling = false;

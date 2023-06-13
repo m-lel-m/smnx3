@@ -180,6 +180,7 @@ nexusclient.sys.resetFreeze = function(target) {
 };
 nexusclient.sys.resetAllFreeze = function() {
     for (var x of Object.keys(nexusclient.sys.freezeTracking)) {
+        if (!x) { x = {}; }
         x.count = 0;
     }
 };

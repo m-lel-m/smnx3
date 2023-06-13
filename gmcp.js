@@ -172,8 +172,9 @@ nexusclient.sys.parseCombatMessage = function(r) {
     }
     if (msg === "void roomdrain" && myName == caster) {
     	for (var a of nexusclient.sys.itemsHere) {
-    		if (a.attrib == "m") {
+    		if (a.name.includes("Overseer") || a.name.includes("Amaka")) {
     			nexusclient.sys.addFreeze(a.name.toLowerCase(), 3);
+    			return;
     		}
     	}
     	for (var p of nexusclient._datahandler.GMCP.RoomPlayers) {

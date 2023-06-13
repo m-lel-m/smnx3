@@ -3,7 +3,7 @@ nexusclient.sys = {};
 nexusclient.sys.import = function() {
     const urlList = [
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/bashtargets.js",
-        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/interrupts.js"
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/interrupts.js",
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/gmcp.js",
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/trigger.js",
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/utils.js",

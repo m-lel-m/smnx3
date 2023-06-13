@@ -381,12 +381,14 @@ nexusclient.sys.onBal = function () {
     }
 };
 nexusclient.sys.harvestCacheCrystal = function() {
+    let area = nexusclient._datahandler.GMCP.Location.areaname;
     let playersHere = nexusclient._datahandler.GMCP.RoomPlayers;
+    if (!area.includes("wilderness")) { return; }
     for (var item of nexusclient.sys.itemsHere) {
         if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0) {
             nexusclient.sys.send("harvest crystal")
             return;
         }
     }
-    nexusclient.sys.info("No more crystals in room!");
+    nexusclient.sys.info("No crystals in room!");
 };

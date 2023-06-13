@@ -41,6 +41,7 @@ nexusclient.sys.updateButtonOne = function() {
             return;
         }
     }
+}
 
 nexusclient.sys.filterElevation = function(arr) {
   var reg = /(ground|mid|high)/g;

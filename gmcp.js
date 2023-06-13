@@ -1,4 +1,5 @@
 nexusclient.sys.gmcp = function(m, r) {
+	if (!nexusclient.sys) {return;}
 	if (m === "Char.Vitals") {
 		nexusclient.sys.systems.forEach(function(s){
 			nexusclient.sys.subsys.health[s] = parseFloat(r[s]);

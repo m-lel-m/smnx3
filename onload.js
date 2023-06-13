@@ -115,15 +115,37 @@ nexusclient.sys.updateCharvitals = function() {
       append_custom_tab_html('charvitals', html);
 }
 
-nexusclient.sys.info = function (m) {
-    nexusclient.display_notice("[SYS-INFO]: " + m, "white");
-};
+---
 
-nexusclient.sys.listcompare = function(a1, a2) {
-    const array1Sorted = a1.slice().sort();
-    const array2Sorted = a2.slice().sort();
-    return array1Sorted.toString() == array2Sorted.toString();
+nexusclient.sys.addFreeze = function(target, stack) {
+    if (!nexusclient.sys.freezeTracking[target]) {
+        nexusclient.sys.freezeTracking[target] = {};
+        nexusclient.sys.freezeTracking[target].count = 0;
+    }
+    nexusclient.sys.freezeTracking[target].count = nexusclient.sys.freezeTracking[target].count + stack;
 }
+
+nexusclient.sys.resetFreeze = function(target) {
+    if (!nexusclient.sys.freezeTracking[target]) { return; }
+    nexusclient.sys.freezeTracking[target].count = 0;
+}
+
+nexusclient.sys.resetAllFreeze = function() {
+    for (var x of Object.keys(nexusclient.sys.freezeTracking)) {
+        x.count = 0;
+    }
+}
+
+nexusclient.sys.showFreezeCount = function(target) {
+    if (!nexusclient.sys.freezeTracking[target]) {
+        display_notice(target + " not currently tracked.", "cyan");
+        return;
+    }
+    var x = nexusclient.sys.freezeTracking[target].count;
+    display_notice("FreezeTrack (" + target + "): ", 'white', 'black', x, 'cyan', 'black');
+}
+
+---
 
 nexusclient.sys.nanodefs = [
     { name:'Rush', cmd:'nano rush' },
@@ -160,6 +182,7 @@ nexusclient.sys.hp_heal_threshold = 0.7;
 nexusclient.sys.canFrenzy = true;
 nexusclient.sys.keepupVacsphere = false;
 nexusclient.sys.autoheal = true;
+nexusclient.sys.freezeTracking = {};
 
 nexusclient.sys.doAutoHeal = function() {
     if (nexusclient.sys.auto || nexusclient.dontinterrupt) { return; }

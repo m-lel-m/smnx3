@@ -43,7 +43,6 @@ nexusclient.sys.keepupVacsphere = false;
 nexusclient.sys.autoheal = true;
 nexusclient.sys.freezeTracking = {};
 nexusclient.sys.currentDefences = [];
-nexusclient.sys.shipsys.setShipTargetList();
 nexusclient.sys.webhooklist = {
     tells: "https://discord.com/api/webhooks/654432870953385995/VH2eq-7GQDsa0J52sdwmrTbo_ECC2PELZqTVkZJROA85llI5j_8C0p3nW55s7ZebarGS",
     scatterhome: "https://discord.com/api/webhooks/654426733914882068/MvlsrnUOnAmdBiyBuAB5zsjB2JRjTXvZtaBezwVMozHgthlhGQuLxNByzSJ6rsRMw3-s",

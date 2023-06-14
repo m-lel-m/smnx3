@@ -157,3 +157,4 @@ nexusclient.sys.shipsys.updateTargetButtons = function() {
 		}
 	}
 };
+nexusclient.sys.shipsys.setShipTargetList();

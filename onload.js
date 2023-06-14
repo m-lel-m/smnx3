@@ -67,8 +67,8 @@ nexusclient.sys.import = function() {
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/bashtargets.js",
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/interrupts.js",
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/utils.js",
-        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/gmcp.js",
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/shipsys.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/gmcp.js",
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/trigger.js",        
         ];
 

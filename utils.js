@@ -54,6 +54,7 @@ nexusclient.sys.webhookMap = function(chan, msg) {
 	case "say":
 	case "emote":
 	case "ooc":
+	case "yell":
 		nexusclient.sys.sendMsgToDiscord(wh.rp, msg);
 		break;
 	case "tells":

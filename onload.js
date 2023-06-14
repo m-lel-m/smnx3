@@ -75,7 +75,7 @@ nexusclient.sys.import = function() {
         import(url).then( (console.log(url)) );
     }
 };
-nexusclient.sys.updateButtonOne = function() {
+nexusclient.sys.shipsys.updateButtonOne = function() {
     if (nexusclient.sys.onShip) {
         var x = nexusclient.sys.shipsys.matscan;
         if (nexusclient.sys.shipsys.automine) {

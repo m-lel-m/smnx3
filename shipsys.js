@@ -88,7 +88,7 @@ nexusclient.sys.shipsys.findMineInBeacon = function(typ) {
     if (typ == "gas") { var searcher = "harvestable"; }
     if (typ == "any") { var searcher = /(mineable|harvestable)/; }
     for (var item of nexusclient.sys.shipsys.beacon) {
-        if (item.beaconobj.search(searcher) > 0) {
+        if (item.beaconobj.search(searcher) > 0 && parseInt(item.distance) > 1) {
             return item;
         }
     }
@@ -103,8 +103,15 @@ nexusclient.sys.shipsys.parseBeaconEnd = function() {
     if (!miningString) { return; }
     var miningCoords = miningString.coordinates.replace(",", " ");
     if (nexusclient.sys.shipsys.aroundAutopilotGoal(miningCoords, 4)) {
-        nexusclient.sys.send("ship halt");
-        nexusclient.sys.send("ship turn " + miningString.direction);
+        if ((parseInt(nexusclient._datahandler.GMCP.Vitals.ship_speed)) > 0) {
+            nexusclient.sys.send("ship halt");
+        }
+        if (miningString.direction != nexusclient.sys.shipsys.getShipBearing(nexusclient._datahandler.GMCP.Vitals.ship_bearing)) {
+            nexusclient.sys.send("ship turn " + miningString.direction);
+        }
+        if (miningString.beaconobj.includes("asteroid") && parseInt(miningString.distance) > 1) {
+            nexusclient.sys.send("ship weapon fire 4427 asteroid");
+        }
         nexusclient.sys.shipsys.matfound = true;
         return;
     }
@@ -132,16 +139,56 @@ nexusclient.sys.shipsys.aroundAutopilotGoal = function(goal, tolerance) {
     }
     return false;
 };
-nexusclient.sys.shipsys.getTargetFromBeacon = function(beacon) {
-    // this function returns the object in the beacon array provided
+nexusclient.sys.shipsys.getTargetFromBeacon = function() {
+    // this function returns the object in the beacon array
+    var beacon = nexusclient.sys.shipsys.beacon;
     var tarList = nexusclient.sys.shipsys.shipTargets;
     for (var tar of tarList) {
         for (var obj of beacon) {
             if (obj.beaconobj.includes(tar)) {
+                nexusclient.sys.shipsys.shipTar = tar;
                 return obj;
             }
         }
     }
+    return false;
+};
+nexusclient.sys.shipsys.shipAutoCombat = function() {
+    var tarObj = nexusclient.sys.shipsys.getTargetFromBeacon();
+    if (!tarObj) { return; }
+    var distance = parseInt(tarObj.distance);
+    if (tarObj.direction != nexusclient.sys.shipsys.getShipBearing(nexusclient._datahandler.GMCP.Vitals.ship_bearing)) {
+        nexusclient.sys.send("ship turn " + tarObj.direction);
+    }
+    if (distance > 50) {
+        nexusclient.sys.send("ship thrust 100 100");
+        return;
+    }
+    if (distance > 20) {
+        nexusclient.sys.send("ship thrust 100 25");
+        return;
+    }
+    if (distance > 10) {
+        nexusclient.sys.shipsys.scoot();
+        return;
+    }
+    if (distance < 4) {
+        nexusclient.sys.send("ship perform skip|ship perform 180");
+    }
+    nexusclient.sys.shipsys.fireAllWeapons();
+};
+nexusclient.sys.shipsys.fireAllWeapons = function(tar = nexusclient.sys.shipsys.shipTar) {
+    if (!nexusclient.sys.shipsys.weapons) {
+        nexusclient.sys.send("ship weapons");
+        return;
+    }
+    for (var wepId of nexusclient.sys.shipsys.weapons) {
+        nexusclient.sys.send("ship weapon fire " + wepId + " " + tar);
+    }
+};
+nexusclient.sys.shipsys.scoot = function() {
+    nexusclient.sys.send("ship thrust 100 100");
+    setTimeout(nexusclient.sys.send("ship halt"), 3000);
 };
 nexusclient.sys.shipsys.updateTargetButtons = function() {
   if (!nexusclient.sys.shipsys.beacon) { return; }

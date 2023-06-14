@@ -71,9 +71,8 @@ nexusclient.sys.import = function() {
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/gmcp.js",
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/trigger.js",        
         ];
-
     for (var url of urlList) {
-        import(url);
+        import(url).then( (console.log(url)) );
     }
 };
 nexusclient.sys.updateButtonOne = function() {

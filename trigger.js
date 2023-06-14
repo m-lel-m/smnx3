@@ -1,8 +1,8 @@
 nexusclient.sys.trigger = function(c) {
 	var l = nexusclient.current_line.line;
 	nexusclient.sys.interruptRegex = /^(\w+)(\s+)(.+)(\s+)\((.*)channeling attack(.*)\)$/;
-	let xyz;
-	let crystalHarvestedRegex = /^After meticulous and exacting labor, you finish polishing .+ crystal, and it drops free into your hand, pulsing with a soft, internal glow\.$/;
+	var xyz;
+	var crystalHarvestedRegex = /^After meticulous and exacting labor, you finish polishing .+ crystal, and it drops free into your hand, pulsing with a soft, internal glow\.$/;
 
 	if (c === "You have recovered your balance.") {
 		nexusclient.sys.onBal(); 

@@ -22,7 +22,7 @@ nexusclient.sys.gmcp = function(m, r) {
 			nexusclient.sys.onShip = false;
 			nexusclient.sys.updateCharvitals();
 		}
-		nexusclient.sys.updateButtonOne();
+		nexusclient.sys.shipsys.updateButtonOne();
 		nexusclient.sys.doAutoHeal();
 	}
 	if (m === "IRE.Target.Info") {

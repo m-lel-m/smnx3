@@ -1,3 +1,5 @@
+nexusclient.sys = {};
+
 nexusclient.sys.import = function() {
     const urlList = [
         "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@latest/bashtargets.js",
@@ -13,7 +15,6 @@ nexusclient.sys.import = function() {
     }
 };
 nexusclient.sys.startupVars = function() {
-    nexusclient.sys = {};
     nexusclient.sys.subsys = {};
     nexusclient.sys.subsys.health = {};
     nexusclient.sys.subsys.efficacy = {};

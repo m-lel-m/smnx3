@@ -238,7 +238,8 @@ nexusclient.sys.onKill = function () {
 };
 nexusclient.sys.attack = function () {
     var cds = nexusclient.sys.cooldowns;
-    if (nexusclient.sys.canFrenzy && cds.includes('ab_Oblivion_frenzy') && nexusclient.sys.sanity >= 400) {
+    var defs = nexusclient.sys.currentDefences;
+    if (nexusclient.sys.canFrenzy && !cds.includes('ab_Oblivion_frenzy') && !Object.keys(defs).includes("Oblivion Frenzy") && nexusclient.sys.sanity >= 400) {
         nexusclient.sys.send("oblivion frenzy");
     }
     if (nexusclient.sys.tarsHere >= 2 && !cds.includes("ab_Oblivion_speedup") && !nexusclient.sys.speedupHere && nexusclient.sys.sanity >= 400) {

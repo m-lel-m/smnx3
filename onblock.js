@@ -5,8 +5,14 @@ eventBus.subscribe("onBlock", (data) => {
 	// iterate over all lines of the received block
 	for (let line of data) {
 		line = nexusclient.sys.stripAnsiCodes(line.line);
-		if (line.includes("You have slain")) {
+		if (line.includes("You have slain")
+			|| line.includes("perishes, you notice a facility security keycard drop from")
+			|| line === "A writhing tentacle of the Inquisitor emerges from a crack in the ground."
+			) {
 			nexusclient.sys.onKill();
+			if (nexusclient.sys.itemsHere.includes("a facility security keycard")) {
+				nexusclient.sys.send("get keycard");
+			}
 			break;
 		}
 		if (nexusclient.sys.isInterruptLine(line)) {
@@ -62,6 +68,34 @@ eventBus.subscribe("onBlock", (data) => {
 			if (d.includes("their entrails mixed with sticky black ichor")) {
 				nexusclient.sys.currentFacilityBoss = "Metalisk";
 			}
+			break;
+		}
+		if (line === "You enter the facility.") {
+			nexusclient.sys.send("landmarks remember fac");
+			nexusclient.sys.facilitySearchList = [];
+			nexusclient.sys.facilitySearching = false;
+			nexusclient.sys.send("crt Facility Boss: " + nexusclient.sys.currentFacilityBoss);
+			nexusclient.sys.send("facility status");
+			break;
+		}
+		if (line === "You leave the facility.") {
+			nexusclient.sys.send("landmarks forget fac");
+			break;
+		}
+		if (line === "You already know a landmark with that name.") {
+			nexusclient.sys.send("landmarks forget fac");
+			nexusclient.sys.send("landmarks remember fac");
+		}
+		if (line.includes("moves in to attack you.")) {
+			nexusclient._datahandler.send_GMCP("Char.Items.Room", "");
+			break;
+		}
+		if (let matches = [...line.matchAll(/Mobs in the facility have gained the (\w+) ability\./)]) {
+			nexusclient.sys.send("crt New affix: " + matches[1]);
+		}
+		if (line.includes("[NPCs]:")) {
+
+			break;
 		}
 	}
 

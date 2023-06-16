@@ -2,15 +2,15 @@
 
 nexusclient.sys = {};
 
-nexusclient.sys.import = function() {
+nexusclient.sys.import = function(key) {
     // order should be bashtargets, interrupts, init, gmcpevents, main, onblock
     const urlList = [
-        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@events/bashtargets.js",
-        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@events/interrupts.js",
-        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@events/gmcpevents.js",
-        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@events/main.js",
-        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@events/onblock.js",
-        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@events/ships.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@"+key+"/bashtargets.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@"+key+"/interrupts.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@"+key+"/gmcpevents.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@"+key+"/main.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@"+key+"/onblock.js",
+        "https://cdn.jsdelivr.net/gh/m-lel-m/smnx3@"+key+"/ships.js",
         ];
     for (var url of urlList) {
         import(url).then( (console.log(url)) );

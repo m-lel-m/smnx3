@@ -1,5 +1,4 @@
 nexusclient.sys.gmcp = function(m, r) {
-	if (!nexusclient.sys) {return;}
 	if (m === "Char.Vitals") {
 		nexusclient.sys.systems.forEach(function(s){
 			nexusclient.sys.subsys.health[s] = parseFloat(r[s]);
@@ -22,7 +21,7 @@ nexusclient.sys.gmcp = function(m, r) {
 			nexusclient.sys.onShip = false;
 			nexusclient.sys.updateCharvitals();
 		}
-		nexusclient.sys.shipsys.updateButtonOne();
+		nexusclient.sys.updateButtonOne();
 		nexusclient.sys.doAutoHeal();
 	}
 	if (m === "IRE.Target.Info") {

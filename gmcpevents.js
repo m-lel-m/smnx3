@@ -7,11 +7,10 @@ eventBus.subscribe("Char.Vitals", (data) => {
 	nexusclient.sys.wwBal = data.ww == "1" ? true : false;
 	nexusclient.sys.hpperc = parseInt(data.hp)/parseInt(data.maxhp);
 	nexusclient.sys.class = data.class;
-	nexusclient.sys.prios = data.ww_prios;
+	nexusclient.sys.wwPrios = data.ww_prios;
 	nexusclient.sys.cooldowns = nexusclient._datahandler.GMCP.Vitals.cooldowns;
 	nexusclient.sys.sanity = data.sa;
 	nexusclient.sys.nanites = data.nn;
-	nexusclient.sys.canFrenzy = true;
 	if (data.ship_name != undefined) {
 		nexusclient.sys.onShip = true;
 		nexusclient.sys.updateShipvitals();
@@ -19,6 +18,9 @@ eventBus.subscribe("Char.Vitals", (data) => {
 	else {
 		nexusclient.sys.onShip = false;
 		nexusclient.sys.updateCharvitals();
+	}
+	if (nexusclient.sys.bal || nexusclient.sys.bal == "1") {
+		nexusclient.sys.onBal();
 	}
 	nexusclient.sys.updateButtonOne();
 	nexusclient.sys.doAutoHeal();
@@ -88,8 +90,10 @@ eventBus.subscribe("Char.Items.Remove", (data) => {
 
 eventBus.subscribe("Room.Info", (data) => {
 	if (data.num !== nexusclient.sys.vnum) {
-		nexusclient.sys.interrupt=false;
+		nexusclient.sys.interrupt = false;
         nexusclient.sys.vacsphere = false;
+        nexusclient.sys.speedupHere = false;
+        nexusclient.sys.pzHere = false;
         nexusclient.sys.onRoomChange(data);
 		}
 	nexusclient.sys.vnum = data.num;
@@ -210,47 +214,3 @@ eventBus.subscribe("IRE.CombatMessage", (data) => {
     	}
     }
 }, "onCombatMessage", true);
-
-
-
-
-
-nexusclient.sys.reset = function() {
-	nexusclient.sys.mindAffCount = 0;
-	nexusclient.sys.hasDistract = false;
-	nexusclient.sys.hasSluggish = false;
-	nexusclient.sys.mindSubsysDmg = 0;
-	nexusclient.sys.ongoingMindswap = false;
-}
-
-nexusclient.sys.onKill = function() {
-	nexusclient.sys.reset();
-	nexusclient.sys.tarEnveloped = false;
-  	nexusclient.sys.auto = false;
-}
-
-nexusclient.sys.onDeath = function() {
-  	nexusclient.sys.reset();
-  	nexusclient.sys.tarEnveloped = false;
-  	nexusclient.sys.canRattle = true;
-  	nexusclient.sys.auto = false;
-}
-
-nexusclient.sys.addMindSubsysDmg = function(amt) {
-  nexusclient.sys.mindSubsysDmg = nexusclient.sys.mindSubsysDmg + amt;
-  var m = nexusclient.sys.mindSubsysDmg;
-  gag_current_line();
-  display_notice("[MIND-DMG] ",'cyan','',amt,'white',''," DEALT",'gray',''," | ",'white','',m,'cyan',''," TOTAL ", 'gray', '');
-}
-
-nexusclient.sys.addMindAffCount = function(amt) {
-  nexusclient.sys.mindAffCount = to_number(nexusclient.sys.mindAffCount) + to_number(amt);
-  var a = nexusclient.sys.mindAffCount;
-  display_notice("[MIND-AFF] ",'cyan','',a,'white',''," TOTAL",'gray','');
-}
-
-nexusclient.sys.updateMindAff = function(tot) {
-  nexusclient.sys.mindAffCount = tot;
-  var a = nexusclient.sys.mindAffCount;
-  display_notice("[MIND-AFF] ",'cyan','',a,'white',''," TOTAL",'gray','');
-}

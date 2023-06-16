@@ -1,34 +1,34 @@
-nexusclient.sys.shipsys.setShipTargetList = function() {
-    nexusclient.sys.shipsys.shipTargets = [
+nexusclient.sys.setShipTargetList = function() {
+    nexusclient.sys.shipTargets = [
         "Ishvana",
         "Vihana",
         "devourer",
         "vessel"
         ];
-    nexusclient.sys.shipsys.updateTargetButtons();
+    nexusclient.sys.updateTargetButtons();
     nexusclient.sys.shipInfo("Ship target list updated!");
 };
-nexusclient.sys.shipsys.getShipBearing = function(num) {
+nexusclient.sys.getShipBearing = function(num) {
     const dirt = [ "", "n", "ne", "e", "se", "s", "sw", "w", "nw" ];
     var x = parseInt(num);
     return dirt[x];
 };
-nexusclient.sys.shipsys.toggleAutomine = function() {
-    if (nexusclient.sys.shipsys.automine) {
-        nexusclient.sys.shipsys.automine = false;
-        nexusclient.sys.shipsys.updateButtonOne();
+nexusclient.sys.toggleAutoMine = function() {
+    if (nexusclient.sys.autoMine) {
+        nexusclient.sys.autoMine = false;
+        nexusclient.sys.updateButtonOne();
         return;
     }
-    if (!nexusclient.sys.shipsys.automine) {
-        nexusclient.sys.shipsys.automine = true;
-        nexusclient.sys.shipsys.updateButtonOne();
+    if (!nexusclient.sys.autoMine) {
+        nexusclient.sys.autoMine = true;
+        nexusclient.sys.updateButtonOne();
         return;
     }
 };
-nexusclient.sys.shipsys.updateShipvitals = function() {
+nexusclient.sys.updateShipvitals = function() {
     var ship_name = nexusclient._datahandler.GMCP.Vitals.ship_name;
     var dir = nexusclient._datahandler.GMCP.Vitals.ship_bearing;
-    var dir = nexusclient.sys.shipsys.getShipBearing(dir);
+    var dir = nexusclient.sys.getShipBearing(dir);
     var ship_speed = nexusclient._datahandler.GMCP.Vitals.ship_speed;
     var hull_perc = (parseInt(nexusclient._datahandler.GMCP.Vitals.ship_hull)/parseInt(nexusclient._datahandler.GMCP.Vitals.ship_hull_max));
     var shield_perc = (parseInt(nexusclient._datahandler.GMCP.Vitals.ship_shield)/parseInt(nexusclient._datahandler.GMCP.Vitals.ship_shield_max));
@@ -47,7 +47,7 @@ nexusclient.sys.shipsys.updateShipvitals = function() {
     var html = "<span style='font-family:Cascadia Code;color:#ffffff;padding:5px'><label for='hull_perc'>Hull: &nbsp;&nbsp;</label><meter id='hull_perc' value='"+hull_perc+"'>"+hull_perc_str+"</meter><br><span style='padding:5px'><label for='shield_perc'>Shield: </label><meter id='shield_perc' value='"+shield_perc+"'>"+shield_perc_str+"</meter><br><span style='padding:5px'><label for='cap_perc'>Cap: &nbsp;&nbsp;&nbsp;</label><meter id='cap_perc' value='"+cap_perc+"'>"+cap_perc_str+"</meter><p><p style='font-family:Cascadia Code;color:#ffffff;padding:5px'>Ship Damage<br>Cap: "+cap_dmg+"<br>Eng: "+eng_dmg+"<br>Sen: "+sen_dmg+"<br>Shi: "+shi_dmg+"<br>Sim: "+sim_dmg+"</p>";
     nexusclient._ui._layout.append_custom_tab_html('shipvitals', html);
 };
-nexusclient.sys.shipsys.getBeaconLineColor = function(beaconstring) {
+nexusclient.sys.getBeaconLineColor = function(beaconstring) {
     if (beaconstring.search("harvestable") > 0 || beaconstring.search("mineable") > 0) {
         return "#ffc20d";
     }
@@ -56,13 +56,13 @@ nexusclient.sys.shipsys.getBeaconLineColor = function(beaconstring) {
     }
     return "#87AFC7";
 };
-nexusclient.sys.shipsys.parseBeaconStart = function() {
-    nexusclient.sys.shipsys.beacon = [];
+nexusclient.sys.parseBeaconStart = function() {
+    nexusclient.sys.shipBeacon = [];
     var header = "<span style='font-family:Cascadia Code;color:#ffffff'>&nbsp;Ship Beacon<p>";
     nexusclient._ui._layout.set_custom_tab_html('beacon', "");
     nexusclient._ui._layout.append_custom_tab_html('beacon', header);
 };
-nexusclient.sys.shipsys.parseBeaconLine = function(dist, dir, sector, coords, beaconstring) {
+nexusclient.sys.parseBeaconLine = function(dist, dir, sector, coords, beaconstring) {
     var tempObj = {
         "distance": dist,
         "direction": dir,
@@ -70,24 +70,24 @@ nexusclient.sys.shipsys.parseBeaconLine = function(dist, dir, sector, coords, be
         "coordinates": coords,
         "beaconobj": beaconstring
     };
-    nexusclient.sys.shipsys.beacon.push(tempObj);
-    nexusclient.sys.shipsys.updateBeaconTabLine(dist, dir, sector, coords, beaconstring);
+    nexusclient.sys.shipBeacon.push(tempObj);
+    nexusclient.sys.updateBeaconTabLine(dist, dir, sector, coords, beaconstring);
 };
-nexusclient.sys.shipsys.updateBeaconTabLine = function(dist, dir, sector, coords, beaconstring) {
+nexusclient.sys.updateBeaconTabLine = function(dist, dir, sector, coords, beaconstring) {
     var output = "&nbsp;[" + dist + " " + dir + "]<span style='font-family:Cascadia Code;color:#333333'>";
     var output = output.padEnd(69, "-");
     var coords = "<span style='font-family:Cascadia Code;color:#B6B6B4'> " + sector + " (" + coords + ")</span>";
     var output = output + "</span>";
-    var color = nexusclient.sys.shipsys.getBeaconLineColor(beaconstring);
+    var color = nexusclient.sys.getBeaconLineColor(beaconstring);
     var bstring = "<span style='font-family:Cascadia Code;color:" + color + "'>" + beaconstring + "</span>";
     var output = "<span style='font-family:Cascadia Code;font-size:12px'>" + output + bstring + coords + "</span><br>";
     nexusclient._ui._layout.append_custom_tab_html('beacon', output);
 };
-nexusclient.sys.shipsys.findMineInBeacon = function(typ) {
+nexusclient.sys.findMineInBeacon = function(typ) {
     if (typ == "ore") { var searcher = "mineable"; }
     if (typ == "gas") { var searcher = "harvestable"; }
     if (typ == "any") { var searcher = /(mineable|harvestable)/; }
-    for (var item of nexusclient.sys.shipsys.beacon) {
+    for (var item of nexusclient.sys.shipBeacon) {
         if (item.beaconobj.search(searcher) > 0 && parseInt(item.distance) > 1) {
             return item;
         }
@@ -95,31 +95,31 @@ nexusclient.sys.shipsys.findMineInBeacon = function(typ) {
     nexusclient.sys.alert("No material type [" + typ + "] found.");
     return false;
 };
-nexusclient.sys.shipsys.parseBeaconEnd = function() {
-    nexusclient.sys.shipsys.updateTargetButtons();
-    var matType = nexusclient.sys.shipsys.matscan;
-    if (!nexusclient.sys.shipsys.automine) { return; }
-    let miningString = nexusclient.sys.shipsys.findMineInBeacon(matType);
+nexusclient.sys.parseBeaconEnd = function() {
+    nexusclient.sys.updateTargetButtons();
+    var matType = nexusclient.sys.matType;
+    if (!nexusclient.sys.autoMine) { return; }
+    let miningString = nexusclient.sys.findMineInBeacon(matType);
     if (!miningString) { return; }
     var miningCoords = miningString.coordinates.replace(",", " ");
-    if (nexusclient.sys.shipsys.aroundAutopilotGoal(miningCoords, 4)) {
+    if (nexusclient.sys.aroundAutopilotGoal(miningCoords, 4)) {
         if ((parseInt(nexusclient._datahandler.GMCP.Vitals.ship_speed)) > 0) {
             nexusclient.sys.send("ship halt");
         }
-        if (miningString.direction != nexusclient.sys.shipsys.getShipBearing(nexusclient._datahandler.GMCP.Vitals.ship_bearing)) {
+        if (miningString.direction != nexusclient.sys.getShipBearing(nexusclient._datahandler.GMCP.Vitals.ship_bearing)) {
             nexusclient.sys.send("ship turn " + miningString.direction);
         }
         if (miningString.beaconobj.includes("asteroid") && parseInt(miningString.distance) > 1) {
             nexusclient.sys.send("ship weapon fire 4427 asteroid");
         }
-        nexusclient.sys.shipsys.matfound = true;
+        nexusclient.sys.matfound = true;
         return;
     }
     var miningCoords = miningString.sector + " " + miningCoords;
     nexusclient.sys.send("ship travel to " + miningCoords);
     nexusclient.sys.shipInfo("Autopilot Coords: " + miningCoords);
 };
-nexusclient.sys.shipsys.aroundAutopilotGoal = function(goal, tolerance) {
+nexusclient.sys.aroundAutopilotGoal = function(goal, tolerance) {
     var spaceCoords = nexusclient._datahandler.GMCP.Location.area;
     var checkNum = parseInt(tolerance);
     var regex = /(\(\d+, \d+\))/g;
@@ -139,25 +139,25 @@ nexusclient.sys.shipsys.aroundAutopilotGoal = function(goal, tolerance) {
     }
     return false;
 };
-nexusclient.sys.shipsys.getTargetFromBeacon = function() {
+nexusclient.sys.getTargetFromBeacon = function() {
     // this function returns the object in the beacon array
-    var beacon = nexusclient.sys.shipsys.beacon;
-    var tarList = nexusclient.sys.shipsys.shipTargets;
+    var beacon = nexusclient.sys.shipBeacon;
+    var tarList = nexusclient.sys.shipTargets;
     for (var tar of tarList) {
         for (var obj of beacon) {
             if (obj.beaconobj.includes(tar)) {
-                nexusclient.sys.shipsys.shipTar = tar;
+                nexusclient.sys.shipTar = tar;
                 return obj;
             }
         }
     }
     return false;
 };
-nexusclient.sys.shipsys.shipAutoCombat = function() {
-    var tarObj = nexusclient.sys.shipsys.getTargetFromBeacon();
+nexusclient.sys.shipAutoCombat = function() {
+    var tarObj = nexusclient.sys.getTargetFromBeacon();
     if (!tarObj) { return; }
     var distance = parseInt(tarObj.distance);
-    if (tarObj.direction != nexusclient.sys.shipsys.getShipBearing(nexusclient._datahandler.GMCP.Vitals.ship_bearing)) {
+    if (tarObj.direction != nexusclient.sys.getShipBearing(nexusclient._datahandler.GMCP.Vitals.ship_bearing)) {
         nexusclient.sys.send("ship turn " + tarObj.direction);
     }
     if (distance > 50) {
@@ -169,31 +169,30 @@ nexusclient.sys.shipsys.shipAutoCombat = function() {
         return;
     }
     if (distance > 10) {
-        nexusclient.sys.shipsys.scoot();
+        nexusclient.sys.shipScoot();
         return;
     }
     if (distance < 4) {
         nexusclient.sys.send("ship perform skip|ship perform 180");
     }
-    nexusclient.sys.shipsys.fireAllWeapons();
+    nexusclient.sys.fireAllWeapons();
 };
-nexusclient.sys.shipsys.fireAllWeapons = function(tar = nexusclient.sys.shipsys.shipTar) {
-    if (!nexusclient.sys.shipsys.weapons) {
+nexusclient.sys.fireAllWeapons = function(tar = nexusclient.sys.shipTar) {
+    if (!nexusclient.sys.weapons) {
         nexusclient.sys.send("ship weapons");
-        return;
     }
-    for (var wepId of nexusclient.sys.shipsys.weapons) {
+    for (var wepId of nexusclient.sys.weapons) {
         nexusclient.sys.send("ship weapon fire " + wepId + " " + tar);
     }
 };
-nexusclient.sys.shipsys.scoot = function() {
+nexusclient.sys.shipScoot = function() {
     nexusclient.sys.send("ship thrust 100 100");
     setTimeout(nexusclient.sys.send("ship halt"), 3000);
 };
-nexusclient.sys.shipsys.updateTargetButtons = function() {
-  if (!nexusclient.sys.shipsys.beacon) { return; }
-	var beacon = nexusclient.sys.shipsys.beacon;
-	for (var tar of nexusclient.sys.shipsys.shipTargets) {
+nexusclient.sys.updateTargetButtons = function() {
+  if (!nexusclient.sys.shipBeacon) { return; }
+	var beacon = nexusclient.sys.shipBeacon;
+	for (var tar of nexusclient.sys.shipTargets) {
 		for (var obj of beacon) {
 			if (obj.beaconobj.includes(tar)) {
                 for (let buttonId = 2; buttonId < 9; buttonId++) {
@@ -204,4 +203,3 @@ nexusclient.sys.shipsys.updateTargetButtons = function() {
 		}
 	}
 };
-nexusclient.sys.shipsys.setShipTargetList();

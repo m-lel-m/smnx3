@@ -42,7 +42,7 @@ eventBus.subscribe("onBlock", (data) => {
 			nexusclient.sys.interrupt = true;
 			break;
 		}
-		if (crystalHarvestedRegex.test(line)) {
+		if (nexusclient.sys.crystalHarvestedRegex.test(line)) {
 			nexusclient.sys.harvestCacheCrystal();
 			break;
 		}

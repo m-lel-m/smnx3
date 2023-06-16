@@ -43,7 +43,12 @@ eventBus.subscribe("onBlock", (data) => {
 			break;
 		}
 		if (nexusclient.sys.crystalHarvestedRegex.test(line)) {
-			nexusclient.sys.harvestCacheCrystal();
+			for (let item of nexusclient.sys.itemsHere) {
+				if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0) {
+					nexusclient.sys.send("harvest crystal");
+					break;
+				}
+			}
 			break;
 		}
 		if (line.includes("A clandestine cloning bay") || line.includes("shattered remains of a Vihana cloning room")) {

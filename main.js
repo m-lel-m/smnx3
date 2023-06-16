@@ -27,7 +27,6 @@ nexusclient.sys.updateCharvitals = function() {
 
       nexusclient._ui._layout.append_custom_tab_html('charvitals', html);
 };
-
 nexusclient.sys.onBal = function () {
     if (nexusclient.sys.needdefs) { nexusclient.sys.nextDefup(); }
     if (!nexusclient.sys.autoHunt) { return; }
@@ -50,6 +49,82 @@ nexusclient.sys.onBal = function () {
     let tarHere = nexusclient.sys.tarCheck();
     if (tarHere) {
         nexusclient.sys.attack();
+    }
+};
+nexusclient.sys.attack = function () {
+    var cds = nexusclient.sys.cooldowns;
+    var defs = nexusclient.sys.currentDefences;
+    if (!cds.includes('ab_Oblivion_frenzy') && !Object.keys(defs).includes("Oblivion Frenzy") && nexusclient.sys.sanity >= 400) {
+        nexusclient.sys.send("oblivion frenzy");
+    }
+    if (nexusclient.sys.tarsHere >= 2 && !cds.includes("ab_Oblivion_speedup") && !nexusclient.sys.speedupHere && nexusclient.sys.sanity >= 400) {
+        nexusclient.sys.send("oblivion speedup");
+        return;
+    }
+    if (nexusclient.sys.tarIsMech) {
+        nexusclient.sys.send("nano zap " + nexusclient.sys.tar);
+        return;
+    }
+    if (nexusclient.sys.keepupVacsphere && !nexusclient.sys.vacsphere) {
+        nexusclient.sys.send("void vacuumsphere");
+        return;
+    }
+    nexusclient.sys.send("void freeze " + nexusclient.sys.tar);
+};
+nexusclient.sys.tarCheck = function () {
+    var mobsHere = nexusclient.sys.itemsHere;
+    if (nexusclient.sys.tar !== "") {
+        for (var i in mobsHere) {
+            if (mobsHere[i].id === nexusclient.sys.tar)
+                return true;
+        }
+    }
+    for (var i in nexusclient.sys.mobs) {
+        for (var k in mobsHere) {
+            if (mobsHere[k].name.toLowerCase() === nexusclient.sys.mobs[i]) {
+                nexusclient.sys.setTar(mobsHere[k].id);
+                return true;
+            }
+        }
+    }
+    nexusclient.sys.alert("No mobs here.");
+    return false;
+};
+nexusclient.sys.setTar = function (t) {
+    nexusclient.sys.tar = t;
+    nexusclient._datahandler.send_GMCP("IRE.Target.Set", nexusclient.sys.tar);
+    nexusclient.sys.tarIsMech=false;
+    var mobsHere = nexusclient.sys.itemsHere;
+    var found = false;
+    for (var i in nexusclient.sys.mechanicals) {
+        for (var k in mobsHere)
+        {
+            if (mobsHere[k].name.toLowerCase() === nexusclient.sys.mechanicals[i]) {
+                nexusclient.sys.tarIsMech=true;
+                found = true;
+                break;
+            }
+        }
+        if (found) break;
+    }
+};
+nexusclient.sys.calcTarsHere = function () {
+    var res = 0;
+    for (var i in nexusclient.sys.itemsHere) {
+        for (var k in nexusclient.sys.mobs) {
+            if (nexusclient.sys.itemsHere[i].name.toLowerCase() === nexusclient.sys.mobs[k]) {
+                res++;
+            }
+        }
+    }
+    nexusclient.sys.tarsHere = res;
+};
+nexusclient.sys.needInterrupt = function () {
+    if (!nexusclient.sys.interrupt) {
+        return false;
+    }
+    if (nexusclient.sys.class == "Nanoseer") {
+        return "nano eyestrike " + nexusclient.sys.chanTar;
     }
 };
 nexusclient.sys.nextDefup = function() {
@@ -121,7 +196,6 @@ nexusclient.sys.doAutoHeal = function() {
         }
     } 
 };
-
 nexusclient.sys.onRoomChange = function(newRoomInfo) {
     if (newRoomInfo.num == -2) {
         nexusclient.ui().layout().flexLayout.model.doAction({data:{tabNode:"beacon"},type:"FlexLayout_SelectTab"});
@@ -140,7 +214,6 @@ nexusclient.sys.onRoomChange = function(newRoomInfo) {
         }
     }
 };
-
 nexusclient.sys.getCleanAffList = function(obj) {
     var affs = Object.keys(obj);
     // declare list of stacking afflictions that exist in game
@@ -162,7 +235,6 @@ nexusclient.sys.getCleanAffList = function(obj) {
     return result;
     // returned result should be a list of all affs, with stacking affs consolidated into one entry, listing only the highest stack of that aff
 };
-
 nexusclient.sys.addFreeze = function(target, stack) {
     if (!nexusclient.sys.freezeTracking[target]) {
         nexusclient.sys.freezeTracking[target] = {};
@@ -188,26 +260,34 @@ nexusclient.sys.showFreezeCount = function(target) {
     var x = nexusclient.sys.freezeTracking[target].count;
     nexusclient.sys.combatInfo("FreezeStacks (" + target + "): " + x);
 };
-
 nexusclient.sys.reset = function() {
+    nexusclient.sys.interrupt = false;
+    nexusclient.sys.vacsphere = false;
+    nexusclient.sys.tar = "";
+    nexusclient.sys.tarIsMech = false;
+    nexusclient.sys.resetAllFreeze();
 	nexusclient.sys.mindAffCount = 0;
 	nexusclient.sys.hasDistract = false;
 	nexusclient.sys.hasSluggish = false;
 	nexusclient.sys.mindSubsysDmg = 0;
 	nexusclient.sys.ongoingMindswap = false;
 }
-
 nexusclient.sys.onKill = function() {
 	nexusclient.sys.reset();
 	nexusclient.sys.tarEnveloped = false;
-  	nexusclient.sys.autoHunt = false;
+    nexusclient.sys.interrupt = false;
+    nexusclient._datahandler.send_GMCP("Char.Items.Room", "");
+    nexusclient.sys.tarCheck();
 }
-
 nexusclient.sys.onDeath = function() {
-  	nexusclient.sys.reset();
+    nexusclient.sys.reset();
+    if (nexusclient.sys.autoHunt) {
+        nexusclient.sys.info("You've died. Autohunting stopped.");
+        nexusclient.sys.autoHunt = false;
+        nexusclient.sys.updateButtonOne();
+    }
   	nexusclient.sys.tarEnveloped = false;
   	nexusclient.sys.canRattle = true;
-  	nexusclient.sys.autoHunt = false;
 }
 /*
 yeah, these don't work yet

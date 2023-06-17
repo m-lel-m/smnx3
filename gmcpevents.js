@@ -19,9 +19,6 @@ eventBus.subscribe("Char.Vitals", (data) => {
 		nexusclient.sys.onShip = false;
 		nexusclient.sys.updateCharvitals();
 	}
-	if (nexusclient.sys.bal || nexusclient.sys.bal == "1") {
-		nexusclient.sys.onBal();
-	}
 	nexusclient.sys.updateButtonOne();
 	nexusclient.sys.doAutoHeal();
 }, "onCharVitals", true);
@@ -131,6 +128,7 @@ eventBus.subscribe("Comm.Channel.Players", (data) => {
 }, "onCommChannelPlayers", true);
 
 eventBus.subscribe("Comm.Channel.Text", (data) => {
+	console.log(data);
 	var chan = data.channel;
 	if (chan.includes("tell")) { var chan = "tells"; }
 	var msg = nexusclient.sys.stripAnsiCodes(data.text);
@@ -178,6 +176,9 @@ eventBus.subscribe("IRE.CombatMessage", (data) => {
 	case "voidism embrace":
 		nexusclient.sys.sentHeal = false;
 		break;
+	case "oblivion negation hit":
+		nexusclient.sys.alert("NEGATION LOST!");
+		break;
 	default:
 	}
 	if (msg.includes("-> distraction")) {
@@ -186,12 +187,12 @@ eventBus.subscribe("IRE.CombatMessage", (data) => {
 		return;
 	}
   	if (msg.includes("distraction ->")) {
-      	nexusclient.sys.combatInfo("Opponent lost distraction!");
+      	nexusclient.sys.combatInfo("Opponent LOST DISTRACTION!");
       	nexusclient.hasDistract = false;
       	return;
     }
   	if (msg.includes("sluggish ->")) {
-      	nexusclient.sys.combatInfo("Opponent lost sluggish!");
+      	nexusclient.sys.combatInfo("Opponent LOST SLUGGISH!");
       	nexusclient.hasSluggish = false;
       	return;
     }

@@ -13,18 +13,6 @@ nexusclient.sys.getShipBearing = function(num) {
     var x = parseInt(num);
     return dirt[x];
 };
-nexusclient.sys.toggleAutoMine = function() {
-    if (nexusclient.sys.autoMine) {
-        nexusclient.sys.autoMine = false;
-        nexusclient.sys.updateButtonOne();
-        return;
-    }
-    if (!nexusclient.sys.autoMine) {
-        nexusclient.sys.autoMine = true;
-        nexusclient.sys.updateButtonOne();
-        return;
-    }
-};
 nexusclient.sys.updateShipvitals = function() {
     var ship_name = nexusclient._datahandler.GMCP.Vitals.ship_name;
     var dir = nexusclient._datahandler.GMCP.Vitals.ship_bearing;
@@ -98,7 +86,7 @@ nexusclient.sys.findMineInBeacon = function(typ) {
 nexusclient.sys.parseBeaconEnd = function() {
     nexusclient.sys.updateTargetButtons();
     var matType = nexusclient.sys.matType;
-    if (!nexusclient.sys.autoMine) { return; }
+    if (!nexusclient.sys.modeMining.value) { return; }
     let miningString = nexusclient.sys.findMineInBeacon(matType);
     if (!miningString) { return; }
     var miningCoords = miningString.coordinates.replace(",", " ");
@@ -178,10 +166,10 @@ nexusclient.sys.shipAutoCombat = function() {
     nexusclient.sys.fireAllWeapons();
 };
 nexusclient.sys.fireAllWeapons = function(tar = nexusclient.sys.shipTar) {
-    if (!nexusclient.sys.weapons) {
+    if (!nexusclient.sys.shipWeapons) {
         nexusclient.sys.send("ship weapons");
     }
-    for (var wepId of nexusclient.sys.weapons) {
+    for (var wepId of nexusclient.sys.shipWeapons) {
         nexusclient.sys.send("ship weapon fire " + wepId + " " + tar);
     }
 };

@@ -29,7 +29,7 @@ nexusclient.sys.updateCharvitals = function() {
 };
 nexusclient.sys.onBal = function () {
     if (nexusclient.sys.needdefs) { nexusclient.sys.nextDefup(); }
-    if (!nexusclient.sys.autoHunt) { return; }
+    if (!nexusclient.sys.modeHunting.value && !nexusclient.sys.modeMindmelting.value) { return; }
     if (!nexusclient.sys.bal) { return; }
     let needInterrupt = nexusclient.sys.needInterrupt();
     if (needInterrupt) {
@@ -46,15 +46,68 @@ nexusclient.sys.onBal = function () {
         nexusclient.sys.send(needHeal);
         return;
     }
-    let tarHere = nexusclient.sys.tarCheck();
-    if (tarHere) {
-        nexusclient.sys.attack();
+    if (nexusclient.sys.modeHunting.value) {
+        let tarHere = nexusclient.sys.tarCheck();
+        if (tarHere) {
+            nexusclient.sys.attack();
+            return;
+        }
     }
+    if (nexusclient.sys.modeMindmelting.value) {
+        let pvpTarHere = nexusclient.sys.pvpTarCheck();
+        if (pvpTarHere) {
+            nexusclient.sys.mindmelt();
+            return;
+        }
+    }
+};
+nexusclient.sys.mindmelt = function() {
+    var san = parseInt(nexusclient.sys.sanity);
+    var nan = parseInt(nexusclient.sys.nanites);
+    var mind = parseInt(nexusclient.sys.mindSubsysDmg);
+    var affs = parseInt(nexusclient.sys.mindAffCount);
+    var cds = nexusclient.sys.cooldowns;
+    var defs = nexusclient.sys.currentDefences;
+    if (!cds.includes("ab_Oblivion_speedup") && !nexusclient.sys.speedupHere && nexusclient.sys.sanity >= 400) {
+        nexusclient.sys.send("oblivion speedup");
+        return;
+    }
+    if (!nexusclient.sys.tarEnveloped) {
+        nexusclient.sys.send("nano envelop " + nexusclient.sys.tar);
+        return;
+    }
+    if (!nexusclient.sys.ongoingMindswap && nan >= 200) {
+        nexusclient.sys.send("nano mindswap " + nexusclient.sys.tar);
+        return;
+    }
+    if (nexusclient.sys.hasDistract && !nexusclient.sys.hasSluggish && nan >= 100) {
+        nexusclient.sys.send("nano sluggish " + nexusclient.sys.tar);
+        return;
+    }
+    if (nexusclient.sys.hasSluggish && nexusclient.sys.canRattle) {
+        nexusclient.sys.send("void rattle " + nexusclient.sys.tar);
+        return;
+    }
+    if ((affs > 5 && mind < 60) || nan <= 100) {
+        nexusclient.sys.send("void minddrain " + nexusclient.sys.tar);
+        return;
+    }
+    if (affs > 6 && mind > 75 && !cds.includes("Nanotech analyze")) {
+        nexusclient.sys.send("nano analyze " + nexusclient.sys.tar);
+        return;
+    }
+    if (cds.includes("Nanotech analyze") && affs > 6 && mind > 75 && san >= 400) {
+        nexusclient.sys.send("oblivion mindmelt " + nexusclient.sys.tar);
+        return;
+    }
+    //if (nan >= 500) {
+        nexusclient.sys.send("nano confound " + nexusclient.sys.tar);
+    //}
 };
 nexusclient.sys.attack = function () {
     var cds = nexusclient.sys.cooldowns;
     var defs = nexusclient.sys.currentDefences;
-    if (!cds.includes('ab_Oblivion_frenzy') && !Object.keys(defs).includes("Oblivion Frenzy") && nexusclient.sys.sanity >= 400) {
+    if (!cds.includes('ab_Oblivion_frenzy') && !Object.keys(defs).includes("Damage +25%") && nexusclient.sys.sanity >= 400) {
         nexusclient.sys.send("oblivion frenzy");
     }
     if (nexusclient.sys.tarsHere >= 2 && !cds.includes("ab_Oblivion_speedup") && !nexusclient.sys.speedupHere && nexusclient.sys.sanity >= 400) {
@@ -70,6 +123,21 @@ nexusclient.sys.attack = function () {
         return;
     }
     nexusclient.sys.send("void freeze " + nexusclient.sys.tar);
+};
+nexusclient.sys.pvpTarCheck = function() {
+    var playersHere = nexusclient._datahandler.GMCP.RoomPlayers;
+    if (nexusclient.sys.tar !== "") {
+        for (var p of playersHere) {
+            if (p.toLowerCase().includes(nexusclient.sys.tar.toLowerCase())) {
+                return true;
+            }
+        }
+        for (var items of nexusclient.sys.itemsHere) {
+            if (items.name.includes("practice dummy")) {
+                return true;
+            }
+        }
+    }
 };
 nexusclient.sys.tarCheck = function () {
     var mobsHere = nexusclient.sys.itemsHere;
@@ -180,8 +248,8 @@ nexusclient.sys.needMend = function () {
     return false;
 };
 nexusclient.sys.doAutoHeal = function() {
-    if (nexusclient.sys.autoHunt || nexusclient.sys.dontInterrupt) { return; }
-    if (nexusclient.sys.autoHeal) { 
+    if (nexusclient.sys.modeHunting.value || nexusclient.sys.dontInterrupt) { return; }
+    if (nexusclient.sys.modeHealing.value) { 
         let needHeal = nexusclient.sys.needHeal();
         if (needHeal && !nexusclient.sys.sentHeal) {
             nexusclient.sys.send(needHeal);
@@ -196,6 +264,7 @@ nexusclient.sys.doAutoHeal = function() {
         }
     } 
 };
+
 nexusclient.sys.onRoomChange = function(newRoomInfo) {
     if (newRoomInfo.num == -2) {
         nexusclient.ui().layout().flexLayout.model.doAction({data:{tabNode:"beacon"},type:"FlexLayout_SelectTab"});
@@ -204,15 +273,33 @@ nexusclient.sys.onRoomChange = function(newRoomInfo) {
         nexusclient.ui().layout().flexLayout.model.doAction({data:{tabNode:"room"},type:"FlexLayout_SelectTab"});
         nexusclient.ui().layout().flexLayout.model.doAction({data:{tabNode:"charvitals"},type:"FlexLayout_SelectTab"});
     }
-    let area = nexusclient._datahandler.GMCP.Location.areaname;
-    let playersHere = nexusclient._datahandler.GMCP.RoomPlayers;
-    if (!area.includes("wilderness")) { return; }
-    for (let item of nexusclient.sys.itemsHere) {
-        if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0) {
-            nexusclient.sys.send("harvest crystal");
+    var area = nexusclient._datahandler.GMCP.Location.area;
+    var items = Object.values(nexusclient.sys.itemsHere).map(object => object.name);
+    var playersHere = nexusclient._datahandler.GMCP.RoomPlayers;
+    if (area.includes("wilderness")) {
+        for (let item of nexusclient.sys.itemsHere) {
+            if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0) {
+                nexusclient.sys.send("harvest crystal");
+                return;
+            }
+        }
+    }
+    if (area.includes("facility")) {
+        if (items.includes("a facility security keycard")) {
+            nexusclient.sys.send("get keycard");
             return;
         }
     }
+    if (nexusclient.sys.modeSearching.value) {
+    if (!nexusclient.sys.facilitySearchList) {nexusclient.sys.facilitySearchList = [];}
+    var currentRoom = nexusclient.map.loc.num;
+    var searched = nexusclient.sys.facilitySearchList;
+    if (!searched.includes(currentRoom)) {
+        searched.push(currentRoom);
+        nexusclient.sys.send("search");
+        return;
+    }
+}
 };
 nexusclient.sys.getCleanAffList = function(obj) {
     var affs = Object.keys(obj);
@@ -281,14 +368,15 @@ nexusclient.sys.onKill = function() {
 }
 nexusclient.sys.onDeath = function() {
     nexusclient.sys.reset();
-    if (nexusclient.sys.autoHunt) {
+    if (nexusclient.sys.modeHunting.value) {
         nexusclient.sys.info("You've died. Autohunting stopped.");
-        nexusclient.sys.autoHunt = false;
+        nexusclient.sys.modeHunting.value = false;
         nexusclient.sys.updateButtonOne();
     }
   	nexusclient.sys.tarEnveloped = false;
   	nexusclient.sys.canRattle = true;
 }
+
 /*
 yeah, these don't work yet
 

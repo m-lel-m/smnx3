@@ -1,6 +1,6 @@
 // declare/define everything that might need to be defined here
 
-nexusclient.sys = {};
+if (!nexusclient.sys) { nexusclient.sys = {}; }
 
 nexusclient.sys.import = function(key) {
     // order should be bashtargets, interrupts, init, gmcpevents, main, onblock
@@ -17,10 +17,43 @@ nexusclient.sys.import = function(key) {
     }
 };
 
+// Mode Bools
+class Mode {
+    constructor(string, value, color) {
+        this.string = string;
+        this.value = value;
+        this.color = color;
+    }
+}
+nexusclient.sys.modeHunting = new Mode("Hunting", false, "#ff00ff");
+nexusclient.sys.modeSearching = new Mode("Searching", false, "#0000ff");
+nexusclient.sys.modeHealing = new Mode("Healing", true, "#00ff00");
+nexusclient.sys.modeMining = new Mode("Mining", false, "#ffff00");
+nexusclient.sys.modeBeacon = new Mode("Beacon", false, "#00ffff");
+nexusclient.sys.modeMindmelting = new Mode("Mindmelting", false, "#9e72f7");
+
+nexusclient.sys.updateModeWindow = function() {
+    function gCol(v) {
+        if (v.value) { return v.color; }
+        if (!v.value) {return "#aaaaaa"; }
+    }
+    var modeString = "<span style='color:#ffffff'> - [<span style='color:"+gCol(nexusclient.sys.modeHunting)+"'> HUNT </span>] [<span style='color:"+gCol(nexusclient.sys.modeSearching)+"'> SRCH </span>] [<span style='color:"+gCol(nexusclient.sys.modeHealing)+"'> HEAL </span>] [<span style='color:"+gCol(nexusclient.sys.modeMining)+"'> MINE </span>] [<span style='color:"+gCol(nexusclient.sys.modeBeacon)+"'> BEAC </span>] [<span style='color:"+gCol(nexusclient.sys.modeMindmelting)+"'> OMML </span><span style='color:#ffffff'>] - </span>";
+    nexusclient._ui._layout.set_custom_tab_html('modewindow', modeString);
+    
+};
+
+nexusclient.sys.toggleMode = function(modeName) {
+    modeName.value = !modeName.value;
+    if (modeName.value) { nexusclient.sys.info(modeName.string + " ON!"); }
+    if (!modeName.value) { nexusclient.sys.info(modeName.string + " OFF!"); }
+    nexusclient.sys.updateModeWindow();
+}
+
 // Vitals
 nexusclient.sys.subsys = {};
 nexusclient.sys.subsys.health = {};
 nexusclient.sys.subsys.efficacy = {};
+nexusclient.sys.subsys.dmgDealt = {};
 nexusclient.sys.class = nexusclient._variables.get("my_class");
 if (nexusclient.sys.class === "B.E.A.S.T.") { nexusclient.sys.class = "BEAST"; }
 nexusclient.sys.systems = [
@@ -30,19 +63,20 @@ nexusclient.sys.systems = [
     "mind",
     "wetwiring"
     ];
+nexusclient.sys.systems.forEach(function(s){
+        nexusclient.sys.subsys.dmgDealt[s] = 0;
+        });
 nexusclient.sys.currentDefences = [];
 
 // Ship Variables
 nexusclient.sys.matFound = false;
 nexusclient.sys.shipTraveling = false;
 nexusclient.sys.matOnBeacon = false;
-nexusclient.sys.autoMine = false;
-nexusclient.sys.autoBeacon = false;
 nexusclient.sys.matType = "any";
 nexusclient.sys.shipBeacon = [];
+nexusclient.sys.shipWeapons = [];
 
 // Hunting
-nexusclient.sys.autoHunt = false;
 nexusclient.sys.tar = "";
 nexusclient.sys.chanTar = "";
 nexusclient.sys.interrupt = false;
@@ -52,7 +86,6 @@ nexusclient.sys.tarHealth = 100;
 nexusclient.sys.tarsHere = 0;
 nexusclient.sys.hp_heal_threshold = 0.7;
 nexusclient.sys.keepupVacsphere = false;
-nexusclient.sys.autoHeal = true;
 
 // PVP
 nexusclient.sys.mindAffCount = 0;
@@ -88,41 +121,13 @@ nexusclient.sys.webhookList = {
     promo: "https://discord.com/api/webhooks/719996267723227192/LuoUilfAt0RYM2WJajH_hOboCjOHZiZHTeJiqYbJgiZ9eYVBbHOZ_FEo2kv4-TZ1_tH9",
     miningfeed: "https://discord.com/api/webhooks/719996267723227192/LuoUilfAt0RYM2WJajH_hOboCjOHZiZHTeJiqYbJgiZ9eYVBbHOZ_FEo2kv4-TZ1_tH9",
     fetek: "https://discord.com/api/webhooks/696435866339508305/UV01rQmNqDlXAyAea3o-rKn2R-rflYUBsF56ufyRF_syCdnBTfLtuzoQt1gsvlqfQS3e",
-    dynasty: "https://discord.com/api/webhooks/654433984650018836/pPiDZgxOBh83aG_5fTOAjGFFlhKn2zjjJ9XfudO9rjmBAJbvhKKyQGO8g5G0Ug8NOD12",
+    dt: "https://discord.com/api/webhooks/654433984650018836/pPiDZgxOBh83aG_5fTOAjGFFlhKn2zjjJ9XfudO9rjmBAJbvhKKyQGO8g5G0Ug8NOD12",
     deathsights: "https://discord.com/api/webhooks/654113950765547520/obaAWAC-IRO1qrRniXwf31rubQUjEdGvNJNOZ0f_m0eNp_8nqFW2aIQHfvytggX7Snoi",
     crew: "https://discord.com/api/webhooks/700568247392534529/PRy2jqi4qoxFMttqBSepV801IiaqAS4vYid73GhOKXjmrjUS1FdHI5XZPT1pYEbHDo8a",
     conflict: "https://discord.com/api/webhooks/654580365796835338/J37NvrX21DfUbkIB8CjRVCr-BgGvCnSIEEFyxKxJ2_n5hh2WDX7Asg-m1syOvawGXjAW",
-    commerce: "https://discord.com/api/webhooks/654462843206369280/R08Phd_YTT1GsZj42Qmgp6cetJXBi0TAlgtgVY_xUaKhmfGuiKEkxh8eox6AbGOGBO2Y",
+    market: "https://discord.com/api/webhooks/654462843206369280/R08Phd_YTT1GsZj42Qmgp6cetJXBi0TAlgtgVY_xUaKhmfGuiKEkxh8eox6AbGOGBO2Y",
     clans: "https://discord.com/api/webhooks/855196701853220884/qRyFROODieVKawCLUQVnp1fGBWjeV82-Zdksi-7oN5BgoqZ0bD1pjUzVxCz-n9ZpbN0Z",
     cesspool: "https://discord.com/api/webhooks/654419400245510164/0SCyKAy88ANsAWDNs267Gh9nZjAN_frblXEwtuP5w_MFCDZvmqTiJEqGsDw3XVuS4ahA",
-};
-
-nexusclient.sys.updateButtonOne = function() {
-    if (nexusclient.sys.onShip) {
-        var x = nexusclient.sys.matType;
-        if (nexusclient.sys.autoMine) {
-            nexusclient._ui._buttons.set(1, '', '', "MINE ("+x+")", '');
-            nexusclient._ui._buttons.highlight_button(1, 1);
-            return;
-        }
-        if (!nexusclient.sys.autoMine) {
-            nexusclient._ui._buttons.set(1, '', '', "MINE ("+x+")", '');
-            nexusclient._ui._buttons.highlight_button(1, 0);
-            return;
-        }
-    }
-    if (!nexusclient.sys.onShip) {
-        if (nexusclient.sys.autoHunt) {
-            nexusclient._ui._buttons.set(1, '', '', "HUNT", '');
-            nexusclient._ui._buttons.highlight_button(1, 1);
-            return;
-        }
-        if (!nexusclient.sys.autoHunt) {
-            nexusclient._ui._buttons.set(1, '', '', "HUNT", '');
-            nexusclient._ui._buttons.highlight_button(1, 0);
-            return;
-        }
-    }
 };
 
 // Utility functions
@@ -137,7 +142,7 @@ nexusclient.sys.info = function (m) {
 };
 
 nexusclient.sys.alert = function(m) {
-    nexusclient.display_notice("[SYS-ALERT]: ", "red", "", m, "white", "");
+    nexusclient.display_notice("[SYS-ALERT]: ", "red", "", m, "yellow", "");
 };
 
 nexusclient.sys.notif = function(m) {
@@ -145,7 +150,7 @@ nexusclient.sys.notif = function(m) {
 };
 
 nexusclient.sys.combatInfo = function(m) {
-    nexusclient.display_notice("[SYS-CINFO]: ", "cyan", "", m, "white", "");
+    nexusclient.display_notice("[SYS-CINFO]: ", "cyan", "", m, "yellow", "");
 };
 
 nexusclient.sys.shipInfo = function(m) {
@@ -194,8 +199,8 @@ nexusclient.sys.webhookMap = function(chan, msg) {
     case "newbie":
         nexusclient.sys.sendMsgToDiscord(wh.newbie, msg);
         break;
-    case "commerce":
-        nexusclient.sys.sendMsgToDiscord(wh.commerce, msg);
+    case "market":
+        nexusclient.sys.sendMsgToDiscord(wh.market, msg);
         break;
     case "dt":
         nexusclient.sys.sendMsgToDiscord(wh.dt, msg);

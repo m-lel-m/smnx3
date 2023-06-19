@@ -19,7 +19,6 @@ eventBus.subscribe("Char.Vitals", (data) => {
 		nexusclient.sys.onShip = false;
 		nexusclient.sys.updateCharvitals();
 	}
-	nexusclient.sys.updateButtonOne();
 	nexusclient.sys.doAutoHeal();
 }, "onCharVitals", true);
 
@@ -178,6 +177,9 @@ eventBus.subscribe("IRE.CombatMessage", (data) => {
 		break;
 	case "oblivion negation hit":
 		nexusclient.sys.alert("NEGATION LOST!");
+		break;
+	case "nanotech analyze":
+		nexusclient.sys.analyzeTarget = target.toLowerCase();
 		break;
 	default:
 	}

@@ -1,10 +1,4 @@
 nexusclient.sys.setShipTargetList = function() {
-    nexusclient.sys.shipTargets = [
-        "Ishvana",
-        "Vihana",
-        "devourer",
-        "vessel"
-        ];
     nexusclient.sys.updateTargetButtons();
     nexusclient.sys.shipInfo("Ship target list updated!");
 };
@@ -84,28 +78,44 @@ nexusclient.sys.findMineInBeacon = function(typ) {
     return false;
 };
 nexusclient.sys.parseBeaconEnd = function() {
+    if (!nexusclient.sys.modeMining.value && !nexusclient.sys.modeShipCombat.value) { return; }
     nexusclient.sys.updateTargetButtons();
     var matType = nexusclient.sys.matType;
-    if (!nexusclient.sys.modeMining.value) { return; }
-    let miningString = nexusclient.sys.findMineInBeacon(matType);
+    if (nexusclient.sys.modeShipCombat.value) {
+        nexusclient.sys.shipAutoCombat();
+        return;
+    }
+    var miningString = nexusclient.sys.findMineInBeacon(matType);
     if (!miningString) { return; }
-    var miningCoords = miningString.coordinates.replace(",", " ");
-    if (nexusclient.sys.aroundAutopilotGoal(miningCoords, 4)) {
+    if (miningString.direction != nexusclient.sys.getShipBearing(nexusclient._datahandler.GMCP.Vitals.ship_bearing)) {
+        nexusclient.sys.send("ship turn " + miningString.direction);
+    }
+    var distance = parseInt(miningString.distance);
+    if (distance > 50) {
+        nexusclient.sys.send("ship thrust 100 100");
+        return;
+    }
+    if (distance > 20) {
+        nexusclient.sys.send("ship thrust 100 25");
+        return;
+    }
+    if (distance > 5) {
+        nexusclient.sys.send("ship thrust 100 10");
+        return;
+    }
+    if (distance <= 5) {
         if ((parseInt(nexusclient._datahandler.GMCP.Vitals.ship_speed)) > 0) {
             nexusclient.sys.send("ship halt");
         }
-        if (miningString.direction != nexusclient.sys.getShipBearing(nexusclient._datahandler.GMCP.Vitals.ship_bearing)) {
-            nexusclient.sys.send("ship turn " + miningString.direction);
-        }
         if (miningString.beaconobj.includes("asteroid") && parseInt(miningString.distance) > 1) {
-            nexusclient.sys.send("ship weapon fire 4427 asteroid");
+            nexusclient.sys.send("trac");
+            return;
         }
-        nexusclient.sys.matfound = true;
-        return;
+        if (miningString.beaconobj.includes("cloud") && (parseInt(nexusclient._datahandler.GMCP.Vitals.ship_speed)) == 0 && !nexusclient.sys.shipDronesDeployed) {
+            nexusclient.sys.send("ship deploy drones");
+            return;
+        }
     }
-    var miningCoords = miningString.sector + " " + miningCoords;
-    nexusclient.sys.send("ship travel to " + miningCoords);
-    nexusclient.sys.shipInfo("Autopilot Coords: " + miningCoords);
 };
 nexusclient.sys.aroundAutopilotGoal = function(goal, tolerance) {
     var spaceCoords = nexusclient._datahandler.GMCP.Location.area;
@@ -183,11 +193,9 @@ nexusclient.sys.updateTargetButtons = function() {
 	for (var tar of nexusclient.sys.shipTargets) {
 		for (var obj of beacon) {
 			if (obj.beaconobj.includes(tar)) {
-                for (let buttonId = 2; buttonId < 9; buttonId++) {
-                   nexusclient._ui._buttons.set(buttonId, "st " + tar + "|ship turn " + obj.direction, '', tar + " [" + obj.distance + " " + obj.direction + "]", '');
-                   nexusclient.sys.shipInfo("Target Found: " + tar + " [" + obj.distance + " " + obj.direction + "]");
-               }
-			}
+               nexusclient.sys.shipInfo("Target Found: " + tar + " [" + obj.distance + " " + obj.direction + "]");
+               break;
+           }
 		}
 	}
 };

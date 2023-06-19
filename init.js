@@ -26,18 +26,20 @@ class Mode {
     }
 }
 nexusclient.sys.modeHunting = new Mode("Hunting", false, "#ff00ff");
-nexusclient.sys.modeSearching = new Mode("Searching", false, "#0000ff");
+nexusclient.sys.modeSearching = new Mode("Searching", false, "#98f5ff");
 nexusclient.sys.modeHealing = new Mode("Healing", true, "#00ff00");
 nexusclient.sys.modeMining = new Mode("Mining", false, "#ffff00");
 nexusclient.sys.modeBeacon = new Mode("Beacon", false, "#00ffff");
 nexusclient.sys.modeMindmelting = new Mode("Mindmelting", false, "#9e72f7");
+nexusclient.sys.modeShipCombat = new Mode("ShipCombat", false, "#ff91af");
+nexusclient.sys.modeTDHarvesting = new Mode("Harvesting", false, "#ffd39b");
 
 nexusclient.sys.updateModeWindow = function() {
     function gCol(v) {
         if (v.value) { return v.color; }
         if (!v.value) {return "#aaaaaa"; }
     }
-    var modeString = "<span style='color:#ffffff'> - [<span style='color:"+gCol(nexusclient.sys.modeHunting)+"'> HUNT </span>] [<span style='color:"+gCol(nexusclient.sys.modeSearching)+"'> SRCH </span>] [<span style='color:"+gCol(nexusclient.sys.modeHealing)+"'> HEAL </span>] [<span style='color:"+gCol(nexusclient.sys.modeMining)+"'> MINE </span>] [<span style='color:"+gCol(nexusclient.sys.modeBeacon)+"'> BEAC </span>] [<span style='color:"+gCol(nexusclient.sys.modeMindmelting)+"'> OMML </span><span style='color:#ffffff'>] - </span>";
+    var modeString = "<span style='color:#ffffff'> - [<span style='color:"+gCol(nexusclient.sys.modeHunting)+"'> HUNT </span>] [<span style='color:"+gCol(nexusclient.sys.modeSearching)+"'> SRCH </span>] [<span style='color:"+gCol(nexusclient.sys.modeHealing)+"'> HEAL </span>] [<span style='color:"+gCol(nexusclient.sys.modeMining)+"'> MINE </span>] [<span style='color:"+gCol(nexusclient.sys.modeBeacon)+"'> BEAC </span>] [<span style='color:"+gCol(nexusclient.sys.modeMindmelting)+"'> OMML </span>] [<span style='color:"+gCol(nexusclient.sys.modeShipCombat)+"'> SHAC </span>] [<span style='color:"+gCol(nexusclient.sys.modeTDHarvesting)+"'> HARV </span><span style='color:#ffffff'>] - </span>";
     nexusclient._ui._layout.set_custom_tab_html('modewindow', modeString);
     
 };
@@ -72,9 +74,16 @@ nexusclient.sys.currentDefences = [];
 nexusclient.sys.matFound = false;
 nexusclient.sys.shipTraveling = false;
 nexusclient.sys.matOnBeacon = false;
+nexusclient.sys.shipDronesDeployed = false;
 nexusclient.sys.matType = "any";
 nexusclient.sys.shipBeacon = [];
 nexusclient.sys.shipWeapons = [];
+nexusclient.sys.shipTargets = [
+        "Ishvana",
+        "Vihana",
+        "devourer",
+        "vessel"
+        ];
 
 // Hunting
 nexusclient.sys.tar = "";

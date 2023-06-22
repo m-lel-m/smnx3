@@ -6,16 +6,18 @@ eventBus.subscribe("onBlock", (data) => {
 	for (var l of data) {
 		if (l.line !== "" && l.line !== undefined) {
 		var line = l.parsed_line.text();
+
 		if (line === "You have recovered your balance.") {
 			nexusclient.sys.onBal();
 			continue;
 		}
 		if (((xyz = /You have slain (.+)\./.exec(line)) !== null) ||
 			((xyz = /As (.+) perishes, you notice a facility security keycard drop from/.exec(line)) !== null) ||
-			line === "A writhing tentacle of the Inquisitor emerges from a crack in the ground." ||
 			line === "The training dummy collapses to a useless pile of debris."
 		) {
-			nexusclient.sys.resetFreeze(xyz[1].toLowerCase());
+			if (xyz[1]) {
+				nexusclient.sys.resetFreeze(xyz[1].toLowerCase());
+			}			
 		    nexusclient.sys.onKill();
 			continue;
 		}
@@ -49,7 +51,7 @@ eventBus.subscribe("onBlock", (data) => {
 		}
 		if (line === "You break out of your frenzy." || line === "You can again whip yourself into a frenzy.") {
 			var cds = nexusclient.sys.cooldowns;
-			if (!nexusclient.sys.currentDefences.includes("Damage +25") && !cds.includes("frenzy") && !nexusclient.sys.dontInterrupt) {
+			if (!nexusclient.sys.currentDefences.includes("Damage +25%") && !cds.includes("frenzy") && !nexusclient.sys.dontInterrupt) {
 				nexusclient.sys.send("oblivion frenzy");
 			}
 			continue;
@@ -58,10 +60,10 @@ eventBus.subscribe("onBlock", (data) => {
 			nexusclient.sys.send("ftk " + xyz[1]);
 			continue;
 		}
-		if (line === "[Mindsim]: WETWIRING REGEN COMPLETE.") {
+		if (line === "[Mindsim]: WETWIRING REGEN COMPLETE." || line === "As you move, your wetwiring ceases regenerating your systems.") {
 			nexusclient.sys.dontInterrupt = false;
 			var cds = nexusclient.sys.cooldowns;
-			if (!nexusclient.sys.currentDefences.includes("Damage +25") && !cds.includes("frenzy")) {
+			if (!nexusclient.sys.currentDefences.includes("Damage +25%") && !cds.includes("frenzy")) {
 				nexusclient.sys.send("oblivion frenzy");
 			}
 			continue;
@@ -102,6 +104,9 @@ eventBus.subscribe("onBlock", (data) => {
 		}
 		if ((xyz = /Freeze level\:\s+(\d+)/.exec(line)) !== null) {
 			nexusclient.sys.combatInfo("FREEZE COUNT: " + xyz[1]);
+			if (nexusclient.sys.analyzeTarget) {
+				nexusclient.sys.freezeTracking[nexusclient.sys.analyzeTarget].count = parseInt(xyz[1]);
+			}
 			var affs = parseInt(nexusclient.sys.mindAffCount);
 			var mind = parseInt(nexusclient.sys.mindSubsysDmg);
 			if (affs >= 7 && mind >= 77) {
@@ -122,11 +127,11 @@ eventBus.subscribe("onBlock", (data) => {
 			var subsysDmg = parseInt(xyz[1])/100;
 			var subsysType = xyz[2];
 			var subsysTar = xyz[3];
-			nexusclient.sys.combatInfo("SUBSYS-DMG: " + subsysDmg + " " + subsysType + " | " + subsysTar);
 			if (subsysType == "mind") {
 				nexusclient.sys.mindSubsysDmg = nexusclient.sys.mindSubsysDmg + subsysDmg;
 			}
 			nexusclient.sys.subsys.dmgDealt[subsysType] = subsysDmg + nexusclient.sys.subsys.dmgDealt[subsysType];
+			nexusclient.sys.combatInfo("SUBSYS-DMG: " + subsysDmg + " " + subsysType + " | TOTAL: " + nexusclient.sys.subsys.dmgDealt[subsysType] + " | " + subsysTar);
 			continue;
 		}
 		if ((xyz = nexusclient.sys.interruptRegex.exec(line)) !== null) {
@@ -134,17 +139,26 @@ eventBus.subscribe("onBlock", (data) => {
 			nexusclient.sys.interrupt = true;
 			continue;
 		}
+		if (line.includes("The doors to the drone docking bay of your ship open")) {
+			nexusclient.sys.shipDronesDeployed = true;
+			nexusclient.sys.send("ship compress");
+			continue;
+		}
+		if (line === "Your drones return to their docking bay as they cannot find any more gas.") {
+			nexusclient.sys.shipDronesDeployed = false;
+			continue;
+		}
 		if (nexusclient.sys.crystalHarvestedRegex.test(line)) {
 			var playersHere = nexusclient._datahandler.GMCP.RoomPlayers;
 			for (let item of nexusclient.sys.itemsHere) {
-				if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0) {
+				if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0 && nexusclient.sys.modeTDHarvesting.value) {
 					nexusclient.sys.send("harvest crystal");
 					break;
 				}
 			}
 			continue;
 		}
-		if (line.includes("A clandestine cloning bay") || line === "The shattered remains of a Vihana cloning room.") {
+		if (line === "A clandestine cloning bay." || line === "The shattered remains of a Vihana cloning room.") {
 			let d = nexusclient._datahandler.GMCP.Location.desc;
 			if (d.includes("flesh dissolved down to the bone")) {
 				nexusclient.sys.currentFacilityBoss = "All-Seer";
@@ -155,19 +169,22 @@ eventBus.subscribe("onBlock", (data) => {
 			if (d.includes("their entrails mixed with sticky black ichor")) {
 				nexusclient.sys.currentFacilityBoss = "Metalisk";
 			}
+			if (!nexusclient.sys.sentFacInfo) {
+				nexusclient.sys.send("crt Facility Boss: " + nexusclient.sys.currentFacilityBoss);
+				nexusclient.sys.sentFacInfo = true;
+				nexusclient.sys.send("facility status");
+			}
 			continue;
 		}
 		if (l.line.includes("[38;5;088;48;5;233m")) {
 			nexusclient.sys.send("clan ophidiance tell " + line);
+			continue;
 		}
 		if (line === "You enter the facility.") {
 			nexusclient.sys.send("landmarks remember fac");
 			nexusclient.sys.facilitySearchList = [];
 			nexusclient.sys.modeSearching.value = false;
-			setTimeout(() => {
-				nexusclient.sys.send("crt Facility Boss: " + nexusclient.sys.currentFacilityBoss);
-				nexusclient.sys.send("facility status");
-			}, 1000);
+			nexusclient.sys.sentFacInfo = false;
 			continue;
 		}
 		if (line === "You leave the facility.") {
@@ -201,7 +218,7 @@ eventBus.subscribe("onBlock", (data) => {
 		}
 		if ((xyz = /crate(\d+)\s+a facility loot crate/.exec(line)) !== null) {
 			nexusclient.sys.facilityCrateId = xyz[1];
-			nexusclient.sys.info("Loot crate ID noted. LOOT CRATE to open.")
+			nexusclient.sys.info("Loot crate ID noted. LOOT CRATE to open.");
 			continue;
 		}
 		if (line === "You are no longer in the throes of battle.") {

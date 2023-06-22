@@ -29,8 +29,13 @@ nexusclient.sys.updateCharvitals = function() {
 };
 nexusclient.sys.onBal = function () {
     if (nexusclient.sys.needdefs) { nexusclient.sys.nextDefup(); }
-    if (!nexusclient.sys.modeHunting.value && !nexusclient.sys.modeMindmelting.value) { return; }
+    if (!nexusclient.sys.modeHunting.value && !nexusclient.sys.modeMindmelting.value && !nexusclient.sys.modeBeacon.value) { return; }
     if (!nexusclient.sys.bal) { return; }
+    if (nexusclient.sys.modeBeacon.value) {
+        nexusclient.sys.send("ship beacon");
+        console.log("beaconing...");
+        return;
+    }
     let needInterrupt = nexusclient.sys.needInterrupt();
     if (needInterrupt) {
         nexusclient.sys.send(needInterrupt);
@@ -278,7 +283,7 @@ nexusclient.sys.onRoomChange = function(newRoomInfo) {
     var playersHere = nexusclient._datahandler.GMCP.RoomPlayers;
     if (area.includes("wilderness")) {
         for (let item of nexusclient.sys.itemsHere) {
-            if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0) {
+            if (item.name.includes("Ta-Deth crystal deposit") && playersHere.length == 0 && nexusclient.sys.modeTDHarvesting.value) {
                 nexusclient.sys.send("harvest crystal");
                 return;
             }
@@ -357,6 +362,9 @@ nexusclient.sys.reset = function() {
 	nexusclient.sys.hasDistract = false;
 	nexusclient.sys.hasSluggish = false;
 	nexusclient.sys.mindSubsysDmg = 0;
+    nexusclient.sys.systems.forEach(function(s){
+        nexusclient.sys.subsys.dmgDealt[s] = 0;
+        });
 	nexusclient.sys.ongoingMindswap = false;
 }
 nexusclient.sys.onKill = function() {
@@ -371,7 +379,6 @@ nexusclient.sys.onDeath = function() {
     if (nexusclient.sys.modeHunting.value) {
         nexusclient.sys.info("You've died. Autohunting stopped.");
         nexusclient.sys.modeHunting.value = false;
-        nexusclient.sys.updateButtonOne();
     }
   	nexusclient.sys.tarEnveloped = false;
   	nexusclient.sys.canRattle = true;

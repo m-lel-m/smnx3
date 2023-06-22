@@ -191,7 +191,7 @@ nexusclient.sys.webhookMap = function(chan, msg) {
         nexusclient.sys.sendMsgToDiscord(wh.rp, msg);
         break;
     case "tells":
-        nexusclient.sys.sendMsgToDiscord(wh.rp, msg);
+        nexusclient.sys.sendMsgToDiscord(wh.tells, msg);
         break;
     case "ft":
         nexusclient.sys.sendMsgToDiscord(wh.scatterhome, msg);

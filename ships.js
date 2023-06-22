@@ -80,7 +80,10 @@ nexusclient.sys.findMineInBeacon = function(typ) {
             return item;
         }
     }
-    nexusclient.sys.alert("No material type [" + typ + "] found.");
+    console.log("No material type [" + typ + "] found.");
+    if (parseInt(nexusclient._datahandler.GMCP.Vitals.ship_speed) == 0) {
+        nexusclient.sys.send("ship thrust 100 100");
+    }
     return false;
 };
 nexusclient.sys.parseBeaconEnd = function() {
